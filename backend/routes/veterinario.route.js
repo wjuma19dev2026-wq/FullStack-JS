@@ -1,21 +1,26 @@
-import { Router } from "express"
+import { Router } from 'express'
 import {
   getProfile,
   getVeterinarios,
-  login,
   postProfile,
   postVeterinarios,
-} from "../controllers/veterinario.controller.js"
+  confirmar,
+} from '../controllers/veterinario.controller.js'
+import { login } from '../controllers/auth.controller.js'
 const router = Router()
 
-router.get("/", getVeterinarios)
+router.get('/', getVeterinarios)
 
-router.post("/", postVeterinarios)
+router.post('/', postVeterinarios)
 
-router.get("/profile", getProfile)
+router.post('/login', login)
 
-router.post("/profile", postProfile)
+router.get('/confirmar/:token', confirmar)
 
-router.get("/login", login)
+router.get('/profile', getProfile)
+
+router.post('/profile', postProfile)
+
+router.get('/login', login)
 
 export default router

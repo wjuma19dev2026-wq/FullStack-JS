@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import argon2 from 'argon2'
 
 const veterinarioSchema = mongoose.Schema(
   {
@@ -39,6 +40,14 @@ const veterinarioSchema = mongoose.Schema(
     versionKey: false,
   },
 )
+
+veterinarioSchema.pre('save', async function (next) {
+  // Solo hashear si el campo 'password' fue modificado
+  if (!this.isModified('password')) next()
+  // Hashear una contraseña (la sal se genera automáticamente)
+  const hashedPassword = await argon2.hash(this.password)
+  this.password = hashedPassword
+})
 
 const Veterinario = mongoose.model('Veterinario', veterinarioSchema)
 
