@@ -43,6 +43,22 @@ const confirmar = async (req, res) => {
   }
 }
 
+const login = async (req, res) => {
+  //- Exists Veterinario
+  const { email } = req.body
+  const veterinario = await Veterinario.findOne({ email })
+  if (!veterinario) {
+    return res.status(404).json({ message: "Veterinario dosn't exists" })
+  }
+
+  //- Is Active
+  if (!veterinario.confirmado) {
+    return res.status(404).json({ message: 'Veterinario no active' })
+  }
+
+  return res.json({ message: 'Auth ' })
+}
+
 const getProfile = (req, res) => {
   res.json({ url: 'Mostrando Perfil de Veterinario' })
 }
@@ -51,15 +67,11 @@ const postProfile = (req, res) => {
   res.json({ url: 'Desde API/VETERINARIOS/PROFILE' })
 }
 
-const login = (req, res) => {
-  res.json({ url: 'Desde API/VETERINARIOS/LOGIN' })
-}
-
 export {
   getVeterinarios,
   postVeterinarios,
-  login,
   getProfile,
   postProfile,
   confirmar,
+  login,
 }

@@ -5,8 +5,8 @@ import {
   postProfile,
   postVeterinarios,
   confirmar,
+  login,
 } from '../controllers/veterinario.controller.js'
-import { login } from '../controllers/auth.controller.js'
 const router = Router()
 
 router.get('/', getVeterinarios)
