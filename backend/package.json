@@ -18,6 +18,7 @@
     "@vladimir-plakhotnik/scryptjs": "^1.2.0",
     "argon2": "^0.45.2",
     "express": "^5.3.0",
+    "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.12.1"
   },
   "devDependencies": {

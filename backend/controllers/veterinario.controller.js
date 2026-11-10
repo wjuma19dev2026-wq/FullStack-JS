@@ -1,5 +1,5 @@
 import Veterinario from '../models/veterinario.model.js'
-import { generateUniqueId } from '../helpers/index.js'
+import { generateUniqueId, generarJWT } from '../helpers/index.js'
 
 const postVeterinarios = async (req, res) => {
   //- User already registered
@@ -14,14 +14,14 @@ const postVeterinarios = async (req, res) => {
     req.body.token = generateUniqueId()
     const veterinario = new Veterinario(req.body)
     await veterinario.save()
-    res.json({ url: 'Veterinario registrado con exito.' })
+    return res.json({ url: 'Veterinario registrado con exito.' })
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    return res.status(500).json({ message: error.message })
   }
 }
 
 const getVeterinarios = (req, res) => {
-  res.json({ url: 'Desde API/VETERINARIOS' })
+  return res.json({ url: 'Desde API/VETERINARIOS' })
 }
 
 const confirmar = async (req, res) => {
@@ -37,15 +37,15 @@ const confirmar = async (req, res) => {
     veterinario.token = null
     veterinario.confirmado = true
     await veterinario.save()
-    res.json({ veterinario, message: 'Confirmando el token, espere...' })
+    return res.json({ veterinario, message: 'Confirmando el token, espere...' })
   } catch (error) {
-    console.log(error)
+    return res.status(500).json({ message: error.message })
   }
 }
 
 const login = async (req, res) => {
   //- Exists Veterinario
-  const { email } = req.body
+  const { email, password } = req.body
   const veterinario = await Veterinario.findOne({ email })
   if (!veterinario) {
     return res.status(404).json({ message: "Veterinario dosn't exists" })
@@ -56,15 +56,25 @@ const login = async (req, res) => {
     return res.status(404).json({ message: 'Veterinario no active' })
   }
 
-  return res.json({ message: 'Auth ' })
+  //- Credentials Validations
+  const comprobarPassword = await veterinario.comprobarPassword(password)
+  if (!comprobarPassword) {
+    return res.status(404).json({ message: 'Credentials no valid' })
+  }
+
+  //- Token Payload
+  const payload = {
+    id: veterinario._id,
+  }
+  return res.json({ message: 'Auth ', token: generarJWT(payload) })
 }
 
 const getProfile = (req, res) => {
-  res.json({ url: 'Mostrando Perfil de Veterinario' })
+  return res.json({ url: 'Mostrando Perfil de Veterinario' })
 }
 
 const postProfile = (req, res) => {
-  res.json({ url: 'Desde API/VETERINARIOS/PROFILE' })
+  return res.json({ url: 'Desde API/VETERINARIOS/PROFILE' })
 }
 
 export {

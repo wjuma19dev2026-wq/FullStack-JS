@@ -9,18 +9,20 @@ import {
 } from '../controllers/veterinario.controller.js'
 const router = Router()
 
+//- Public Routes
 router.get('/', getVeterinarios)
 
 router.post('/', postVeterinarios)
+
+router.get('/login', login)
 
 router.post('/login', login)
 
 router.get('/confirmar/:token', confirmar)
 
+//- Private Routes
 router.get('/profile', getProfile)
 
 router.post('/profile', postProfile)
-
-router.get('/login', login)
 
 export default router

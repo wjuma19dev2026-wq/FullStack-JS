@@ -41,12 +41,19 @@ const veterinarioSchema = mongoose.Schema(
   },
 )
 
-veterinarioSchema.pre('save', async function (next) {
+veterinarioSchema.pre('save', async function () {
   // Solo hashear si el campo 'password' fue modificado
-  if (!this.isModified('password')) next()
+  if (!this.isModified('password')) {
+    return
+  }
+
   // Hashear una contraseña (la sal se genera automáticamente)
   const hashedPassword = await argon2.hash(this.password)
   this.password = hashedPassword
+})
+
+veterinarioSchema.method('comprobarPassword', function (passwordIntroducido) {
+  return argon2.verify(this.password, passwordIntroducido)
 })
 
 const Veterinario = mongoose.model('Veterinario', veterinarioSchema)
