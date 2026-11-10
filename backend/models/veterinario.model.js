@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+import mongoose from 'mongoose'
 
 const veterinarioSchema = mongoose.Schema(
   {
@@ -27,6 +27,7 @@ const veterinarioSchema = mongoose.Schema(
     },
     token: {
       type: String,
+      default: Date.now(),
     },
     confirmado: {
       type: Boolean,
@@ -39,6 +40,6 @@ const veterinarioSchema = mongoose.Schema(
   },
 )
 
-const Veterinario = mongoose.model("Veterinario", veterinarioSchema)
+const Veterinario = mongoose.model('Veterinario', veterinarioSchema)
 
 export default Veterinario
