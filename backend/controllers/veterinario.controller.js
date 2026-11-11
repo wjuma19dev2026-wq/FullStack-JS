@@ -68,9 +68,9 @@ const login = async (req, res) => {
   }
 
   //- Is Active
-  if (!veterinario.confirmado) {
-    return res.status(404).json({ message: 'Veterinario no active' })
-  }
+  // if (!veterinario.confirmado) {
+  //   return res.status(404).json({ message: 'Veterinario no active' })
+  // }
 
   //- Credentials Validations
   const comprobarPassword = await veterinario.comprobarPassword(password)

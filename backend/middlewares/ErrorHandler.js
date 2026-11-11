@@ -61,7 +61,7 @@ export const ErrorHandler = (err, req, res, next) => {
   if (statusCode >= 500) {
     console.error('💥 ERROR DEL SERVIDOR:', err)
   } else {
-    console.warn('⚠️  ERROR DEL CLIENTE:', err.message)
+    console.warn(`⚠️  WARNING DEL CLIENTE: ${err.message}`.yellow)
   }
 
   res.status(statusCode).json({

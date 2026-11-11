@@ -23,6 +23,7 @@ export const isAuth = async (req, res, next) => {
       return next()
     } catch (error) {
       const tokenExpiredError = new UnauthorizedError()
+      tokenExpiredError.isOperational = false
       tokenExpiredError.name = 'TokenExpiredError'
       return next(tokenExpiredError)
     }
@@ -31,5 +32,6 @@ export const isAuth = async (req, res, next) => {
   // No hay tokon, mostrar error
   const jsonWebTokenError = new UnauthorizedError()
   jsonWebTokenError.name = 'JsonWebTokenError'
+  jsonWebTokenError.isOperational = false
   return next(jsonWebTokenError)
 }
