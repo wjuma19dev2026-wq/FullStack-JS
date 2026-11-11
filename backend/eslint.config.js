@@ -60,7 +60,7 @@ export default defineConfig([
       'space-before-function-paren': ['error', 'always'],
       'keyword-spacing': 'error',
       'space-infix-ops': 'error',
-      'arrow-spacing': 'error',
+      'arrow-spacing': 'off',
       'brace-style': ['error', '1tbs', { allowSingleLine: true }],
       'no-path-concat': 'error',
       'global-require': 'error',

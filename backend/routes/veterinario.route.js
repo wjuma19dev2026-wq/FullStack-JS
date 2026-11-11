@@ -7,10 +7,11 @@ import {
   confirmar,
   login,
 } from '../controllers/veterinario.controller.js'
+import { isAuth } from '../middlewares/index.js'
 const router = Router()
 
 //- Public Routes
-router.get('/', getVeterinarios)
+router.get('/', isAuth, getVeterinarios)
 
 router.post('/', postVeterinarios)
 

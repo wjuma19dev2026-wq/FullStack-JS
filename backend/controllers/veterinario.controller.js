@@ -1,5 +1,11 @@
 import Veterinario from '../models/veterinario.model.js'
 import { generateUniqueId, generarJWT } from '../helpers/index.js'
+import {
+  AppError,
+  NotFoundError,
+  ValidationError,
+  UnauthorizedError,
+} from '../utils/index.js'
 
 const postVeterinarios = async (req, res) => {
   //- User already registered
@@ -20,8 +26,13 @@ const postVeterinarios = async (req, res) => {
   }
 }
 
-const getVeterinarios = (req, res) => {
-  return res.json({ url: 'Desde API/VETERINARIOS' })
+const getVeterinarios = (req, res, next) => {
+  try {
+    return res.json({ url: 'Desde API/VETERINARIOS' })
+  } catch (error) {
+    const appError = new AppError(error.message, 500)
+    next(appError)
+  }
 }
 
 const confirmar = async (req, res) => {

@@ -4,6 +4,7 @@ import 'colors'
 
 import { connectToDatabase } from './config/db.js'
 import veterinariosRoutes from './routes/veterinario.route.js'
+import { ErrorHandler } from './middlewares/index.js'
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -15,6 +16,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use(express.json())
 
 app.use('/api/veterinarios', veterinariosRoutes)
+app.use(ErrorHandler)
 
 connectToDatabase()
   .then(db => {
