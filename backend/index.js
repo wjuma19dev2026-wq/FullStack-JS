@@ -3,7 +3,7 @@ import morgan from 'morgan'
 import 'colors'
 
 import { connectToDatabase } from './config/db.js'
-import veterinariosRoutes from './routes/veterinario.route.js'
+import { pacienteRoutes, veterinarioRoutes } from './routes/index.js'
 import { ErrorHandler } from './middlewares/index.js'
 
 const app = express()
@@ -15,7 +15,8 @@ if (process.env.NODE_ENV === 'development') {
 
 app.use(express.json())
 
-app.use('/api/veterinarios', veterinariosRoutes)
+app.use('/api/veterinarios', veterinarioRoutes)
+app.use('/api/pacientes', pacienteRoutes)
 app.use(ErrorHandler)
 
 connectToDatabase()
