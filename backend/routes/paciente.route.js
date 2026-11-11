@@ -1,8 +1,13 @@
 import { Router } from 'express'
-import { todosLosPacientes } from '../controllers/paciente.controller.js'
+import { isAuth } from '../middlewares/index.js'
+
+import {
+  obtenerPacientes,
+  registrarPaciente,
+} from '../controllers/paciente.controller.js'
 
 const router = Router()
 
-router.get('/', todosLosPacientes)
+router.route('/').get(obtenerPacientes).post([isAuth], registrarPaciente)
 
 export default router
