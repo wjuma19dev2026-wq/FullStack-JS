@@ -1,14 +1,35 @@
-export const isAuth = (req, res, next) => {
+import jwt from 'jsonwebtoken'
+
+import Veterinario from '../models/veterinario.model.js'
+import { UnauthorizedError } from '../utils/index.js'
+
+export const isAuth = async (req, res, next) => {
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
   ) {
-    //- Validar el token contra JWT
-    const token = req.headers.authorization
-    console.log(token)
-    next()
+    try {
+      const token = req.headers.authorization.split(' ')[1]
+      const decoded = jwt.decode(token, process.env.JWT_SECRET)
+
+      if (!decoded) {
+        throw new Error()
+      }
+
+      const veterinario = await Veterinario.findById(decoded.id).select(
+        '-password -token -confirmado',
+      )
+      req.veterinario = veterinario
+      return next()
+    } catch (error) {
+      const tokenExpiredError = new UnauthorizedError()
+      tokenExpiredError.name = 'TokenExpiredError'
+      return next(tokenExpiredError)
+    }
   }
 
   // No hay tokon, mostrar error
-  next()
+  const jsonWebTokenError = new UnauthorizedError()
+  jsonWebTokenError.name = 'JsonWebTokenError'
+  return next(jsonWebTokenError)
 }

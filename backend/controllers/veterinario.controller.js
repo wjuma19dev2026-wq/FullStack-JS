@@ -1,4 +1,6 @@
-import Veterinario from '../models/veterinario.model.js'
+import { Types } from 'mongoose'
+import { PasswordReset, Veterinario } from '../models/index.js'
+
 import { generateUniqueId, generarJWT } from '../helpers/index.js'
 import {
   AppError,
@@ -28,10 +30,13 @@ const postVeterinarios = async (req, res) => {
 
 const getVeterinarios = (req, res, next) => {
   try {
-    return res.json({ url: 'Desde API/VETERINARIOS' })
+    return res.json({
+      url: 'Desde API/VETERINARIOS',
+      veterinario: req.veterinario,
+    })
   } catch (error) {
     const appError = new AppError(error.message, 500)
-    next(appError)
+    return next(appError)
   }
 }
 
@@ -86,6 +91,104 @@ const getProfile = (req, res) => {
 
 const postProfile = (req, res) => {
   return res.json({ url: 'Desde API/VETERINARIOS/PROFILE' })
+}
+
+export const forgotPassword = async (req, res, next) => {
+  const { email } = req.body
+  //- Toquen que le vamos a enviar al cliente por correo
+  const resetToken = generateUniqueId()
+  console.log(resetToken)
+
+  //- Exist veterinario
+  const veterinario = await Veterinario.findOne({ email })
+  if (!veterinario) {
+    const notFoundError = new NotFoundError()
+    notFoundError.name = 'INVALID_CREDENTIALS'
+    notFoundError.isOperational = false
+    return next(notFoundError)
+  }
+
+  // If user exists, gen token
+  const userId = new Types.ObjectId(veterinario._id)
+  const passwordReset = new PasswordReset({ userId })
+  passwordReset.tokenHash = PasswordReset.hashToken(resetToken)
+
+  //- Eliminar de la base de datos cualquier otro token que el usuario tenga solicitado previa a esta.
+  await PasswordReset.deleteMany({ userId, usedAt: null })
+
+  await passwordReset.save()
+  return res.status(200).json({
+    message: 'Te hemos enviado un coreeo electronico.',
+  })
+}
+
+/*
+  Method: GET
+  Url: localhost://4000/api/veterinarios/forgot-password/:token
+  Params: Token
+ */
+export const forgotPasswordTokenVerify = async (req, res, next) => {
+  const { token } = req.params
+
+  //- Token Compare
+  const tokenHash = PasswordReset.hashToken(token)
+  const tokenDb = await PasswordReset.findOne({ tokenHash, usedAt: null })
+
+  //- TODO: Si no existe el tokenDb devolver error 'INVALID-TOKEN'
+  if (!tokenDb) {
+    const validationError = new ValidationError()
+    validationError.name = 'TOKEN_INVALID'
+    validationError.isOperational = false
+    return next(validationError)
+  }
+
+  const compareToken = tokenDb.compareToken(token)
+
+  //- TODO: Si !compareToken, entonces TOKEN_EXPIRES
+  if (!compareToken) {
+    const validationError = new ValidationError()
+    validationError.name = 'TOKEN_EXPIRED'
+    validationError.isOperational = false
+    return next(validationError)
+  }
+
+  return res.status(200).json({ message: 'forgotPasswordTokenVerify', token })
+}
+
+/*
+  Method: POST
+  Url: localhost://4000/api/veterinarios/forgot-password/:token
+  Params: Token
+ */
+export const forgotPasswordChangePassword = async (req, res, next) => {
+  const { password } = req.body
+  const { token } = req.params
+
+  //- Token Compare
+  const tokenHash = PasswordReset.hashToken(token)
+  const tokenDb = await PasswordReset.findOne({ tokenHash, usedAt: null })
+
+  //- TODO: Si no existe el tokenDb devolver error 'INVALID-TOKEN'
+  if (!tokenDb) {
+    const validationError = new ValidationError()
+    validationError.name = 'TOKEN_INVALID'
+    validationError.isOperational = false
+    return next(validationError)
+  }
+
+  //- Setter new password
+  const veterinario = await Veterinario.findOne({ _id: tokenDb.userId })
+  veterinario.password = password
+  await veterinario.save()
+
+  //- Delete tokenDb
+  // await tokenDb.deleteOne()
+
+  //- Update tokenDb to usedAt date
+  tokenDb.usedAt = Date.now()
+  await tokenDb.save()
+
+  res.status(200).json({ message: 'Password changed succesfully!.' })
 }
 
 export {
