@@ -1,13 +1,12 @@
+import { RouterProvider } from 'react-router'
+import router from './AppRoutes'
+
 import './App.css'
 
-function App() {
+export const App = () => {
   return (
     <>
-      <h1 className="text-3xl font-bold text-lime-500 text-center mt-10">
-        APV administrador
-      </h1>
+      <RouterProvider router={router} />
     </>
   )
 }
-
-export default App
