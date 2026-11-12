@@ -15,6 +15,11 @@ export const ErrorHandler = (err, req, res, next) => {
     message = 'Invalid email or password'
   }
 
+  if (err.name === 'CONFLICT') {
+    statusCode = 409
+    message = 'Email already exists'
+  }
+
   if (err.name === 'TOKEN_INVALID') {
     statusCode = 401
     message = 'Invalid authentication token'

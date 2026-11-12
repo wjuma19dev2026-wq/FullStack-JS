@@ -17,9 +17,12 @@
   "dependencies": {
     "@vladimir-plakhotnik/scryptjs": "^1.2.0",
     "argon2": "^0.45.2",
+    "cors": "^2.8.6",
     "express": "^5.3.0",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.12.1"
+    "mailtrap": "^6.2.0",
+    "mongoose": "^9.12.1",
+    "nodemailer": "^10.5.0"
   },
   "devDependencies": {
     "@eslint/css": "^2.0.1",

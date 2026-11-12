@@ -21,7 +21,7 @@ const router = createBrowserRouter([
         Component: Login,
       },
       {
-        path: 'confirmar-cuenta',
+        path: 'confirmar-cuenta/:token',
         Component: ConfirmarCuenta,
       },
       {

@@ -21,7 +21,7 @@ class ValidationError extends AppError {
 }
 
 class UnauthorizedError extends AppError {
-  constructor(message = 'No autorizado') {
+  constructor(message = 'Token no valido o ha expirado') {
     super(message, 401)
   }
 }

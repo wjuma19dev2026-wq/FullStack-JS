@@ -1,7 +1,9 @@
 import { Link } from 'react-router'
 import { Input, InputButton } from '../shared'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Alerta from '../../components/Alerta'
+import { veterinariosApi } from '../../api'
+import { sleep } from '../../utils'
 
 const Resgistrar = () => {
   const [nombre, setNombre] = useState('')
@@ -9,29 +11,42 @@ const Resgistrar = () => {
   const [password, setPassword] = useState('')
   const [passwordRepeat, setPasswordRepeat] = useState('')
   const [alertaOptions, setAlertaOptions] = useState({})
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = e => {
+  useEffect(() => {
+    const alertTimeOut = setTimeout(() => setAlertaOptions({}), 3000)
+    return () => clearTimeout(alertTimeOut)
+  }, [alertaOptions])
+
+  const handleSubmit = async e => {
     e.preventDefault()
+    setIsLoading(true)
     if ([correo, nombre, password, passwordRepeat].includes('')) {
+      setIsLoading(false)
       setAlertaOptions({
         message: 'Todos los campos son obligatorios!.',
         type: 'error',
+        title: 'Atencion',
       })
       return
     }
 
     if (password !== passwordRepeat) {
+      setIsLoading(false)
       setAlertaOptions({
         message: 'Tu contraseña son diferentes!.',
         type: 'error',
+        title: 'Atencion',
       })
       return
     }
 
     if (password.length < 6) {
+      setIsLoading(false)
       setAlertaOptions({
         message: 'La contraseña es muy corta, agrega minimo 6 caracteres!.',
         type: 'error',
+        title: 'Atencion',
       })
       return
     }
@@ -39,7 +54,32 @@ const Resgistrar = () => {
     setAlertaOptions({})
 
     //- Crear el veterinario en la API
-    console.log('Formulario enviado con exito!.')
+    try {
+      await sleep(2000)
+      const response = await veterinariosApi.post('/veterinarios', {
+        nombre,
+        password,
+        email: correo,
+      })
+      setIsLoading(false)
+      setNombre('')
+      setCorreo('')
+      setPassword('')
+      setPasswordRepeat('')
+      setAlertaOptions({
+        message: response.data.message,
+        type: 'success',
+        title: 'Success',
+      })
+      console.log(response.data)
+    } catch (err) {
+      setIsLoading(false)
+      setAlertaOptions({
+        message: err.response.data.message,
+        type: 'error',
+        title: err.response.data.status,
+      })
+    }
   }
 
   return (
@@ -98,7 +138,7 @@ const Resgistrar = () => {
           <InputButton
             btnType="submit"
             btnValue="crear cuenta"
-            btnDisabled={false}
+            btnDisabled={isLoading}
           />
         </form>
 

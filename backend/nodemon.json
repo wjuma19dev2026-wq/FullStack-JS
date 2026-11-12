@@ -3,6 +3,6 @@
   "ignore": ["public/**/*", "node_modules/**/*"],
   "ext": "js,json,ejs",
   "delay": "300ms",
-  "env": { "NODE_ENV": "development" },
+  "env": { "NODE_ENV": "production" },
   "exec": "node --env-file=../.env --enable-source-maps"
 }

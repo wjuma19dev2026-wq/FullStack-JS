@@ -1,7 +1,11 @@
 import { Types } from 'mongoose'
 import { PasswordReset, Veterinario } from '../models/index.js'
-
-import { generateUniqueId, generarJWT } from '../helpers/index.js'
+import { mailtrapSenderEmail } from '../services/index.js'
+import {
+  generateUniqueId,
+  generarJWT,
+  emailRegistro,
+} from '../helpers/index.js'
 import {
   AppError,
   NotFoundError,
@@ -9,22 +13,39 @@ import {
   UnauthorizedError,
 } from '../utils/index.js'
 
-const postVeterinarios = async (req, res) => {
-  //- User already registered
-  const { email } = req.body
+const postVeterinarios = async (req, res, next) => {
+  const { email, nombre } = req.body
+
   const existUser = await Veterinario.findOne({ email })
   if (existUser) {
-    const error = new Error('User already registered')
-    return res.status(403).json({ error, message: error.message })
+    const validationError = new ValidationError()
+    validationError.name = 'CONFLICT'
+    validationError.isOperational = false
+    throw validationError
   }
 
   try {
     req.body.token = generateUniqueId()
     const veterinario = new Veterinario(req.body)
     await veterinario.save()
-    return res.json({ url: 'Veterinario registrado con exito.' })
-  } catch (error) {
-    return res.status(500).json({ message: error.message })
+
+    // ENVIAR CORREO DE VERIFICACION
+    // emailRegistro({
+    //   email,
+    //   nombre,
+    //   token: veterinario.token,
+    // })
+    mailtrapSenderEmail({
+      email,
+      nombre,
+      token: veterinario.token,
+    })
+
+    return res
+      .status(201)
+      .json({ message: 'Veterinario registrado con exito, revisa tu correo.' })
+  } catch (err) {
+    return next(err)
   }
 }
 
@@ -40,49 +61,56 @@ const getVeterinarios = (req, res, next) => {
   }
 }
 
-const confirmar = async (req, res) => {
+const confirmar = async (req, res, next) => {
   //- Validar Token
   const { token } = req.params
   const veterinario = await Veterinario.findOne({ token })
+  console.log(veterinario)
+
   if (!veterinario) {
-    const error = new Error('Token no valido o ha expirado')
-    return res.status(404).json({ message: error.message })
+    const unauthorizedError = new UnauthorizedError()
+    throw unauthorizedError
   }
 
   try {
     veterinario.token = null
     veterinario.confirmado = true
     await veterinario.save()
-    return res.json({ veterinario, message: 'Confirmando el token, espere...' })
-  } catch (error) {
-    return res.status(500).json({ message: error.message })
+    return res.json({ message: 'Cuenta confirmada exitosamente.' })
+  } catch (err) {
+    return next(err)
   }
 }
 
-const login = async (req, res) => {
-  //- Exists Veterinario
+const login = async (req, res, next) => {
   const { email, password } = req.body
   const veterinario = await Veterinario.findOne({ email })
-  if (!veterinario) {
-    return res.status(404).json({ message: "Veterinario dosn't exists" })
-  }
 
-  //- Is Active
-  // if (!veterinario.confirmado) {
-  //   return res.status(404).json({ message: 'Veterinario no active' })
-  // }
+  try {
+    if (!veterinario) {
+      const notFoundError = new NotFoundError()
+      notFoundError.name = 'INVALID_CREDENTIALS'
+      notFoundError.isOperational = false
+      throw notFoundError
+    }
 
-  //- Credentials Validations
-  const comprobarPassword = await veterinario.comprobarPassword(password)
-  if (!comprobarPassword) {
-    return res.status(404).json({ message: 'Credentials no valid' })
-  }
+    //- Credentials Validations
+    const comprobarPassword = await veterinario.comprobarPassword(password)
+    if (!comprobarPassword) {
+      const notFoundError = new NotFoundError()
+      notFoundError.name = 'INVALID_CREDENTIALS'
+      notFoundError.isOperational = false
+      throw notFoundError
+    }
 
-  //- Token Payload
-  const payload = {
-    id: veterinario._id,
+    //- Token Payload
+    const payload = {
+      id: veterinario._id,
+    }
+    return res.json({ message: 'Auth ', token: generarJWT(payload) })
+  } catch (err) {
+    next(err)
   }
-  return res.json({ message: 'Auth ', token: generarJWT(payload) })
 }
 
 const getProfile = (req, res) => {
