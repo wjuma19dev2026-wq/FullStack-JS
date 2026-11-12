@@ -1,11 +1,11 @@
 import { MailtrapClient } from 'mailtrap'
 
-const TOKEN = process.env.MAILTRP_EMAIL_PASS
+const MAILTRAP_SANDBOX_ID = process.env.MAILTRAP_SANDBOX_ID
 
 const client = new MailtrapClient({
-  token: TOKEN,
+  token: MAILTRAP_SANDBOX_ID,
   sandbox: true,
-  // testInboxId: 5021285,
+  testInboxId: 5021285,
 })
 
 const mailtrapSenderEmail = async datos => {

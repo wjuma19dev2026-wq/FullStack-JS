@@ -103,6 +103,7 @@ const Resgistrar = () => {
             <Input
               inputChange={e => setNombre(e.target.value)}
               inputName="nombre"
+              inputValue={nombre}
               inputType="text"
               inputPlaceholder="tu nombre"
               labelContent="nombre"
@@ -112,6 +113,7 @@ const Resgistrar = () => {
             <Input
               inputChange={e => setCorreo(e.target.value)}
               inputName="correo"
+              inputValue={correo}
               inputType="email"
               inputPlaceholder="tu correo electrónico"
               labelContent="Correo electrónico"
@@ -122,6 +124,7 @@ const Resgistrar = () => {
               inputChange={e => setPassword(e.target.value)}
               inputName="password"
               inputType="password"
+              inputValue={password}
               inputPlaceholder="tu contraseña"
               labelContent="tu contraseña"
             />
@@ -131,6 +134,7 @@ const Resgistrar = () => {
               inputChange={e => setPasswordRepeat(e.target.value)}
               inputName="password_repeat"
               inputType="password"
+              inputValue={passwordRepeat}
               inputPlaceholder="confirma la contraseña"
               labelContent="confirmar contraseña"
             />

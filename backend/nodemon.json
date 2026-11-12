@@ -4,5 +4,5 @@
   "ext": "js,json,ejs",
   "delay": "300ms",
   "env": { "NODE_ENV": "production" },
-  "exec": "node --env-file=../.env --enable-source-maps"
+  "exec": "node --env-file=./.env --enable-source-maps"
 }

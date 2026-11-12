@@ -12,7 +12,7 @@
     "watch:browser": "NODE_OPTIONS=\"--disable-warning=DEP0060\" browser-sync start --proxy 'localhost:4000' --files 'public/**/*,views/**/*.ejs,index.js' --reloadDelay 1000",
     "dev:bs": "npm-run-all --parallel watch:server watch:browser",
     "dev:debug": "nodemon --env-file=../.env --inspect=9229 index.js",
-    "dev": "nodemon index"
+    "dev": "nodemon index.js"
   },
   "dependencies": {
     "@vladimir-plakhotnik/scryptjs": "^1.2.0",
