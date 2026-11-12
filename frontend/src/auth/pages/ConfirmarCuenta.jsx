@@ -1,7 +1,8 @@
 const ConfirmarCuenta = () => {
   return (
     <>
-      <p>ConfirmarCuenta works!</p>
+      <div>1</div>
+      <div>2</div>
     </>
   )
 }

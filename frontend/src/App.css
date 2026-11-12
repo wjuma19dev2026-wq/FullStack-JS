@@ -18,7 +18,15 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'HiMelody';
+  src: url('./assets/fonts/Hi_Melody/HiMelody-Regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 body {
-  font-family: 'Staatliches';
-  /*font-family: 'CoveredByYourGrace';*/
+  /*font-family: 'Staatliches';*/
+  font-family: 'CoveredByYourGrace';
 }

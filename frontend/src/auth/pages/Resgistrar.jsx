@@ -6,7 +6,9 @@ const Resgistrar = () => {
       <div className="p-5 mb-10 md:mb-0">
         <h1 className="text-indigo-600 font-black text-5xl text-center md:text-left">
           Crea tu cuenta y administra{' '}
-          <span className="text-black">tus pacientes</span>
+          <span className="text-black font-extrabold text-6xl">
+            tus pacientes
+          </span>
         </h1>
       </div>
       <div className="p-5 m-5 sm:m-0 lg:p-10 px-5 bg-white shadow-lg rounded-xl">
@@ -65,7 +67,7 @@ const Resgistrar = () => {
             ¿Ya tienes una cuenta?
             <Link
               to="/"
-              className="text-indigo-500"
+              className="text-indigo-500 font-extrabold"
             >
               {' '}
               Iniciar Sesión
