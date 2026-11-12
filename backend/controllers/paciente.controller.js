@@ -49,7 +49,7 @@ export const registrarPaciente = async (req, res, next) => {
 }
 
 /**
- * Obtener Listado de Pacientes
+ * Obtener un paciente por pacienteId
  * @param { import('express').Request<{ pacienteId: string }, {}, > & {veterinario?: Veterinario} } req
  * @param { import('express').Response } res
  * @param { import('express').NextFunction } next
@@ -80,7 +80,7 @@ export const obtenerPaciente = async (req, res, next) => {
 }
 
 /**
- * Obtener Listado de Pacientes
+ * Actualiza un pacientes de la base de datos
  * @param { import('express').Request<{ pacienteId: string }, {}, import('../types/paciente.type.js').Paciente > & {veterinario?: Veterinario} } req
  * @param { import('express').Response } res
  * @param { import('express').NextFunction } next
@@ -116,7 +116,7 @@ export const actualizarPaciente = async (req, res, next) => {
 }
 
 /**
- * Obtener Listado de Pacientes
+ * Elimina un pacientes de la base de datos
  * @param { import('express').Request<{ pacienteId: string }, {}, > & {veterinario?: Veterinario} } req
  * @param { import('express').Response } res
  * @param { import('express').NextFunction } next
