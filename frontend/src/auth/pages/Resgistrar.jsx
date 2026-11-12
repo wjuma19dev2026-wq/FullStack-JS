@@ -1,9 +1,50 @@
 import { Link } from 'react-router'
+import { Input, InputButton } from '../shared'
+import { useState } from 'react'
+import Alerta from '../../components/Alerta'
 
 const Resgistrar = () => {
+  const [nombre, setNombre] = useState('')
+  const [correo, setCorreo] = useState('')
+  const [password, setPassword] = useState('')
+  const [passwordRepeat, setPasswordRepeat] = useState('')
+  const [alertaOptions, setAlertaOptions] = useState({})
+
+  const handleSubmit = e => {
+    e.preventDefault()
+    if ([correo, nombre, password, passwordRepeat].includes('')) {
+      setAlertaOptions({
+        message: 'Todos los campos son obligatorios!.',
+        type: 'error',
+      })
+      return
+    }
+
+    if (password !== passwordRepeat) {
+      setAlertaOptions({
+        message: 'Tu contraseña son diferentes!.',
+        type: 'error',
+      })
+      return
+    }
+
+    if (password.length < 6) {
+      setAlertaOptions({
+        message: 'La contraseña es muy corta, agrega minimo 6 caracteres!.',
+        type: 'error',
+      })
+      return
+    }
+
+    setAlertaOptions({})
+
+    //- Crear el veterinario en la API
+    console.log('Formulario enviado con exito!.')
+  }
+
   return (
     <>
-      <div className="p-5 mb-10 md:mb-0">
+      <div className="p-5">
         <h1 className="text-indigo-600 font-black text-5xl text-center md:text-left">
           Crea tu cuenta y administra{' '}
           <span className="text-black font-extrabold text-6xl">
@@ -12,53 +53,52 @@ const Resgistrar = () => {
         </h1>
       </div>
       <div className="p-5 m-5 sm:m-0 lg:p-10 px-5 bg-white shadow-lg rounded-xl">
-        <form>
+        {alertaOptions.message && (
           <div className="mb-5">
-            <label className="block uppercase text-gray-600 text-xl font-bold">
-              Nombre
-            </label>
-            <input
-              type="text"
-              placeholder="Tu nombre"
-              className="border w-full p-3 mt-2 bg-gray-50 rounded-xl"
+            <Alerta alertaOptions={alertaOptions} />
+          </div>
+        )}
+        <form onSubmit={handleSubmit}>
+          <div className="mb-5">
+            <Input
+              inputChange={e => setNombre(e.target.value)}
+              inputName="nombre"
+              inputType="text"
+              inputPlaceholder="tu nombre"
+              labelContent="nombre"
             />
           </div>
           <div className="mb-5">
-            <label className="block uppercase text-gray-600 text-xl font-bold">
-              Correo electrónico
-            </label>
-            <input
-              type="text"
-              placeholder="Correo de registro"
-              className="border w-full p-3 mt-2 bg-gray-50 rounded-xl"
+            <Input
+              inputChange={e => setCorreo(e.target.value)}
+              inputName="correo"
+              inputType="email"
+              inputPlaceholder="tu correo electrónico"
+              labelContent="Correo electrónico"
             />
           </div>
           <div className="mb-5">
-            <label className="block uppercase text-gray-600 text-xl font-bold">
-              Contraseña
-            </label>
-            <input
-              type="password"
-              placeholder="Tu Contraseña"
-              className="border w-full p-3 mt-2 bg-gray-50 rounded-xl"
+            <Input
+              inputChange={e => setPassword(e.target.value)}
+              inputName="password"
+              inputType="password"
+              inputPlaceholder="tu contraseña"
+              labelContent="tu contraseña"
             />
           </div>
-
           <div className="mb-5">
-            <label className="block uppercase text-gray-600 text-xl font-bold">
-              Confirmar Contraseña
-            </label>
-            <input
-              type="password"
-              placeholder="Confirma la Contraseña"
-              className="border w-full p-3 mt-2 bg-gray-50 rounded-xl"
+            <Input
+              inputChange={e => setPasswordRepeat(e.target.value)}
+              inputName="password_repeat"
+              inputType="password"
+              inputPlaceholder="confirma la contraseña"
+              labelContent="confirmar contraseña"
             />
           </div>
-
-          <input
-            type="button"
-            value="Crear cuenta"
-            className="bg-indigo-500 hover:bg-indigo-800 transition-all ease-in py-3 px-10 w-full text-white rounded-lg font-bold hover:cursor-pointer md:w-auto "
+          <InputButton
+            btnType="submit"
+            btnValue="crear cuenta"
+            btnDisabled={false}
           />
         </form>
 
