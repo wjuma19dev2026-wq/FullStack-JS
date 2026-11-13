@@ -1,1 +1,1 @@
-export { default as veterinariosApi } from './veterinarios.api.js'
+export { default as veterinariosApi, httpClient } from './veterinarios.api.js'

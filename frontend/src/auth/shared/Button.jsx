@@ -1,4 +1,5 @@
 import { cn } from 'cn'
+
 const btn = `inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-full hover:cursor-pointer md:w-auto disabled:cursor-not-allowed disabled:opacity-50`
 
 const Button = ({
@@ -21,10 +22,10 @@ const Button = ({
         loading && 'cursor-not-allowed opacity-70',
       )}
     >
-      {loading ? (
+      {isFetching ? (
         <>
           <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-          <span>{btnValue || 'Cargando...'}</span>
+          <span>Por favor, espera...</span>
         </>
       ) : (
         btnValue

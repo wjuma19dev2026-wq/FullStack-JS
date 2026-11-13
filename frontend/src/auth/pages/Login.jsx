@@ -1,10 +1,12 @@
 import { Link } from 'react-router'
+import { Button, Input } from '../shared'
+import { AnchorLink } from '../../components'
 
 const Login = () => {
   return (
     <>
       <div className="p-5 mb-10 md:mb-0">
-        <h1 className="text-indigo-600 font-black text-5xl text-center md:text-left">
+        <h1 className="text-indigo-600 font-black text-5xl md:text-left">
           Inicia Sesión y Administra tus{' '}
           <span className="text-black font-extrabold text-6xl">pacientes</span>
         </h1>
@@ -12,47 +14,44 @@ const Login = () => {
       <div className="p-5 m-5 sm:m-0 lg:p-10 px-5 bg-white shadow-lg rounded-xl">
         <form>
           <div className="mb-5">
-            <label className="block uppercase text-gray-600 text-xl font-bold">
-              Correo electrónico
-            </label>
-            <input
-              type="text"
-              placeholder="Correo de registro"
-              className="border w-full p-3 mt-2 bg-gray-50 rounded-xl"
+            <Input
+              inputName="correo"
+              inputType="email"
+              labelContent="correo electrónico"
+              inputPlaceholder="Ingresa tu correo electrónico"
+              required={true}
             />
           </div>
           <div className="mb-5">
-            <label className="block  text-gray-600 text-xl font-bold">
-              Contraseña
-            </label>
-            <input
-              type="password"
-              placeholder="Tu Contraseña"
-              className="border w-full p-3 mt-2 bg-gray-50 rounded-xl"
+            <Input
+              inputName="password"
+              inputType="password"
+              labelContent="contraseña"
+              inputPlaceholder="Ingresa tu contraseña"
+              required={true}
             />
           </div>
-
-          <input
-            type="button"
-            value="Iniciar Sesión"
-            className="bg-indigo-500 hover:bg-indigo-800 transition-all ease-in py-3 px-10 w-full text-white rounded-lg font-bold hover:cursor-pointer md:w-auto "
+          <Button
+            btnDisabled={true}
+            btnType="submit"
+            btnValue="iniciar sesión"
+            isFetching={false}
           />
         </form>
 
         <nav className="mt-10 md:mt-5 md:flex md:justify-between">
-          <span className="block text-center my-3 md:my-0 text-gray-500">
-            ¿No tienes una cuenta?
-            <Link
-              to="/registrar"
-              className="text-indigo-500 font-extrabold"
-            >
-              {' '}
-              Regístrate
-            </Link>
-          </span>
-          <span className="text-center block text-gray-500">
-            <Link to="/olvide-password">Olvide mi contraseña</Link>
-          </span>
+          <AnchorLink
+            type="confirm"
+            question="no tienes una cuenta"
+            action="regístrate"
+            href="/registrar"
+          />
+
+          <AnchorLink
+            type="alert"
+            href="/olvide-password"
+            action="olvide mi contraseña"
+          />
         </nav>
       </div>
     </>

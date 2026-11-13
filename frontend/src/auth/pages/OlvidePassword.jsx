@@ -7,7 +7,7 @@
  */
 
 import { Link } from 'react-router'
-import { Input, InputButton, Button } from '../shared'
+import { Input, Button } from '../shared'
 import { useEffect, useState } from 'react'
 import { Alerta } from '../../components'
 import veterinarioApi from '../../api/veterinarios.api'
@@ -117,13 +117,6 @@ const OlvidePassword = () => {
               </p>
             )}
           </div>
-
-          {/*          <InputButton
-            isFetching={isFetching}
-            btnType="submit"
-            btnValue="Enviar instrucciones"
-            btnDisabled={!isValid}
-          />*/}
 
           <Button
             isFetching={isFetching}

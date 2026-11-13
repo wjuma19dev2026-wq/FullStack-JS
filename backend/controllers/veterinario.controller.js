@@ -1,17 +1,8 @@
 import { Types } from 'mongoose'
 import { PasswordReset, Veterinario } from '../models/index.js'
 import { mailtrapSenderEmail } from '../services/index.js'
-import {
-  generateUniqueId,
-  generarJWT,
-  emailOlvidePassword,
-} from '../helpers/index.js'
-import {
-  AppError,
-  NotFoundError,
-  ValidationError,
-  UnauthorizedError,
-} from '../utils/index.js'
+import { generateUniqueId, generarJWT, emailOlvidePassword } from '../helpers/index.js'
+import { AppError, NotFoundError, ValidationError, UnauthorizedError } from '../utils/index.js'
 import { mailtrapClient } from '../mailtrap/client.mailtrap.js'
 
 const postVeterinarios = async (req, res, next) => {
@@ -42,9 +33,7 @@ const postVeterinarios = async (req, res, next) => {
       token: veterinario.token,
     })
 
-    return res
-      .status(201)
-      .json({ message: 'Veterinario registrado con exito, revisa tu correo.' })
+    return res.status(201).json({ message: 'Veterinario registrado con exito, revisa tu correo.' })
   } catch (err) {
     return next(err)
   }
@@ -132,6 +121,7 @@ export const forgotPassword = async (req, res, next) => {
   if (process.env.NODE_ENV === 'development') {
     console.log(resetToken)
   }
+  console.log(resetToken)
 
   try {
     //- Existe veterinario
@@ -188,29 +178,34 @@ export const forgotPassword = async (req, res, next) => {
 export const forgotPasswordTokenVerify = async (req, res, next) => {
   const { token } = req.params
 
-  //- Token Compare
+  //- Hasheamos el token para poder buscarlo en la DB
   const tokenHash = PasswordReset.hashToken(token)
-  const tokenDb = await PasswordReset.findOne({ tokenHash, usedAt: null })
 
-  //- TODO: Si no existe el tokenDb devolver error 'INVALID-TOKEN'
-  if (!tokenDb) {
-    const validationError = new ValidationError()
-    validationError.name = 'TOKEN_INVALID'
-    validationError.isOperational = false
-    return next(validationError)
+  try {
+    const tokenDb = await PasswordReset.findOne({ tokenHash, usedAt: null })
+
+    //- TODO: Si no existe el tokenDb devolver error 'INVALID-TOKEN'
+    if (!tokenDb) {
+      const validationError = new ValidationError()
+      validationError.name = 'TOKEN_INVALID'
+      validationError.isOperational = false
+      throw validationError
+    }
+
+    const compareToken = tokenDb.compareToken(token)
+
+    //- TODO: Si !compareToken, entonces TOKEN_EXPIRES
+    if (!compareToken) {
+      const validationError = new ValidationError()
+      validationError.name = 'TOKEN_EXPIRED'
+      validationError.isOperational = false
+      throw validationError
+    }
+
+    return res.json({ message: 'token valido y el veterinario existe' })
+  } catch (err) {
+    return next(err)
   }
-
-  const compareToken = tokenDb.compareToken(token)
-
-  //- TODO: Si !compareToken, entonces TOKEN_EXPIRES
-  if (!compareToken) {
-    const validationError = new ValidationError()
-    validationError.name = 'TOKEN_EXPIRED'
-    validationError.isOperational = false
-    return next(validationError)
-  }
-
-  return res.status(200).json({ message: 'forgotPasswordTokenVerify', token })
 }
 
 /*
@@ -246,14 +241,11 @@ export const forgotPasswordChangePassword = async (req, res, next) => {
   tokenDb.usedAt = Date.now()
   await tokenDb.save()
 
-  res.status(200).json({ message: 'Password changed succesfully!.' })
+  return res.json({
+    success: true,
+    title: 'enhorabuena',
+    message: 'contraseña actualizada exitosamente',
+  })
 }
 
-export {
-  getVeterinarios,
-  postVeterinarios,
-  getProfile,
-  postProfile,
-  confirmar,
-  login,
-}
+export { getVeterinarios, postVeterinarios, getProfile, postProfile, confirmar, login }
