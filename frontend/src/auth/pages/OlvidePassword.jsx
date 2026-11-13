@@ -1,23 +1,80 @@
+/**
+ * @typedef {Object} ForgotPasswordResponse
+ * @property {boolean} success
+ * @property {string} title
+ * @property {string} message
+ * @property {string} email
+ */
+
 import { Link } from 'react-router'
-import { Input, InputButton } from '../shared'
+import { Input, InputButton, Button } from '../shared'
 import { useEffect, useState } from 'react'
+import { Alerta } from '../../components'
+import veterinarioApi from '../../api/veterinarios.api'
+import { sleep } from '../../utils/sleep'
 
 // Regex sencilla y suficiente para el 99% de los casos
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+/**
+ * @returns {Promise<void>}
+ */
 const OlvidePassword = () => {
   const [correo, setCorreo] = useState('')
   const [touched, setTouched] = useState(false)
+  const [alertOpts, setAlertOpts] = useState({})
+  const [showAlert, setShowAlert] = useState(false)
+  const [isFetching, setIsFetching] = useState(false)
 
   const isValid = EMAIL_REGEX.test(correo)
   // Solo mostramos error si el usuario ya interactuó y hay contenido inválido
   const showError = touched && correo.length > 0 && !isValid
 
-  const handleSubmit = e => {
+  useEffect(() => {
+    const ocultarAlerta = setTimeout(() => {
+      setShowAlert(false)
+    }, 3000)
+
+    return () => clearTimeout(ocultarAlerta)
+  }, [showAlert])
+
+  const handleSubmit = async e => {
     e.preventDefault()
     setTouched(true)
+    setIsFetching(true)
     if (!isValid) return
-    console.log('Enviando:', correo)
+
+    try {
+      await sleep(3000)
+      const { data: respuesta } = await veterinarioApi.post('veterinarios/forgot-password', {
+        email: correo,
+      })
+
+      setIsFetching(false)
+
+      /** @type {ForgotPasswordResponse} */
+      const data = respuesta
+
+      if (data.success) {
+        setAlertOpts({
+          title: data.title,
+          message: data.message,
+          type: 'default',
+        })
+        setShowAlert(true)
+        console.log(alertOpts)
+      }
+    } catch (err) {
+      setIsFetching(false)
+      if (err.response.data.message === 'Invalid email or password') {
+        setAlertOpts({
+          title: 'Ops, algo salio mal',
+          message: 'El correo electrónico no existe',
+          type: 'error',
+        })
+        setShowAlert(true)
+      }
+    }
   }
 
   return (
@@ -25,12 +82,16 @@ const OlvidePassword = () => {
       <div className="p-5 mb-10 md:mb-0">
         <h1 className="text-indigo-600 font-black text-5xl text-center md:text-left">
           recupera tu acceso y no pierdas{' '}
-          <span className="text-black font-extrabold text-6xl">
-            tus pacientes
-          </span>
+          <span className="text-black font-extrabold text-6xl">tus pacientes</span>
         </h1>
       </div>
       <div className="p-5 grid content-center m-5 sm:m-0 lg:p-10 px-5 bg-white shadow-lg rounded-xl">
+        {showAlert && (
+          <div className="mb-5">
+            <Alerta alertaOptions={alertOpts} />
+          </div>
+        )}
+
         <form
           onSubmit={handleSubmit}
           noValidate
@@ -44,7 +105,7 @@ const OlvidePassword = () => {
               inputValue={correo}
               inputBlur={() => setTouched(true)}
               inputType="email"
-              inputPlaceholder="tu correo electrónico"
+              inputPlaceholder="Ingresa un correo electrónico valido."
               labelContent="Correo electrónico"
             />
             {showError && (
@@ -57,7 +118,15 @@ const OlvidePassword = () => {
             )}
           </div>
 
-          <InputButton
+          {/*          <InputButton
+            isFetching={isFetching}
+            btnType="submit"
+            btnValue="Enviar instrucciones"
+            btnDisabled={!isValid}
+          />*/}
+
+          <Button
+            isFetching={isFetching}
             btnType="submit"
             btnValue="Enviar instrucciones"
             btnDisabled={!isValid}

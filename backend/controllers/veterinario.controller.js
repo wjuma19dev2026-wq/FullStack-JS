@@ -158,19 +158,22 @@ export const forgotPassword = async (req, res, next) => {
     await passwordReset.save()
 
     //- ENVIAR CORREO CON EL TOKEN AL CLIENTE
-    const mailtrapResults = await emailOlvidePassword({
-      token: resetToken,
-      email,
-      nombre: veterinario.nombre,
-    })
+    // const mailtrapResults = await emailOlvidePassword({
+    //   token: resetToken,
+    //   email,
+    //   nombre: veterinario.nombre,
+    // })
 
     //- Se puede eliminar para produccion
     if (process.env.NODE_ENV === 'development') {
-      console.log(mailtrapResults)
+      // console.log(mailtrapResults)
     }
 
-    return res.status(200).json({
-      message: 'Te hemos enviado un coreeo electronico.',
+    return res.json({
+      success: true,
+      title: 'revisa tu correo',
+      message: 'Te hemos enviado un coreeo electronico con las instrucciones',
+      email,
     })
   } catch (err) {
     next(err)
