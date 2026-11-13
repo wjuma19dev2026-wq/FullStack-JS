@@ -7,6 +7,7 @@ import { AuthLayout } from './auth/layout/AuthLayout'
 import {
   ConfirmarCuenta,
   Login,
+  NuevaPassword,
   OlvidePassword,
   Resgistrar,
 } from './auth/pages'
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
       {
         path: 'olvide-password',
         Component: OlvidePassword,
+      },
+      {
+        path: 'olvide-password/:token',
+        Component: NuevaPassword,
       },
     ],
   },

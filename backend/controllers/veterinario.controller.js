@@ -4,7 +4,7 @@ import { mailtrapSenderEmail } from '../services/index.js'
 import {
   generateUniqueId,
   generarJWT,
-  emailRegistro,
+  emailOlvidePassword,
 } from '../helpers/index.js'
 import {
   AppError,
@@ -12,6 +12,7 @@ import {
   ValidationError,
   UnauthorizedError,
 } from '../utils/index.js'
+import { mailtrapClient } from '../mailtrap/client.mailtrap.js'
 
 const postVeterinarios = async (req, res, next) => {
   const { email, nombre } = req.body
@@ -125,29 +126,55 @@ export const forgotPassword = async (req, res, next) => {
   const { email } = req.body
   //- Toquen que le vamos a enviar al cliente por correo
   const resetToken = generateUniqueId()
-  console.log(resetToken)
 
-  //- Exist veterinario
-  const veterinario = await Veterinario.findOne({ email })
-  if (!veterinario) {
-    const notFoundError = new NotFoundError()
-    notFoundError.name = 'INVALID_CREDENTIALS'
-    notFoundError.isOperational = false
-    return next(notFoundError)
+  // Token que se le va a enviar al cliente para validar contra la base de datos
+  //- Se puede eliminar para produccion
+  if (process.env.NODE_ENV === 'development') {
+    console.log(resetToken)
   }
 
-  // If user exists, gen token
-  const userId = new Types.ObjectId(veterinario._id)
-  const passwordReset = new PasswordReset({ userId })
-  passwordReset.tokenHash = PasswordReset.hashToken(resetToken)
+  try {
+    //- Existe veterinario
+    const veterinario = await Veterinario.findOne({ email })
 
-  //- Eliminar de la base de datos cualquier otro token que el usuario tenga solicitado previa a esta.
-  await PasswordReset.deleteMany({ userId, usedAt: null })
+    if (!veterinario) {
+      const notFoundError = new NotFoundError()
+      notFoundError.name = 'INVALID_CREDENTIALS'
+      notFoundError.isOperational = false
+      throw notFoundError
+    }
 
-  await passwordReset.save()
-  return res.status(200).json({
-    message: 'Te hemos enviado un coreeo electronico.',
-  })
+    // If user exists, gen token
+    const userId = new Types.ObjectId(veterinario._id)
+    // Se crea una nueva instancia DB passwordReset
+    const passwordReset = new PasswordReset({ userId })
+    // Se hashea el token a travez del metodo statico del modelo y se guarda token hasheado en la DB
+    passwordReset.tokenHash = PasswordReset.hashToken(resetToken)
+
+    //- Eliminar de la base de datos cualquier otro token que el usuario tenga solicitado previa a esta.
+    await PasswordReset.deleteMany({ userId, usedAt: null })
+
+    // Se guarda el registro de la nueva solicitud del token en la DB
+    await passwordReset.save()
+
+    //- ENVIAR CORREO CON EL TOKEN AL CLIENTE
+    const mailtrapResults = await emailOlvidePassword({
+      token: resetToken,
+      email,
+      nombre: veterinario.nombre,
+    })
+
+    //- Se puede eliminar para produccion
+    if (process.env.NODE_ENV === 'development') {
+      console.log(mailtrapResults)
+    }
+
+    return res.status(200).json({
+      message: 'Te hemos enviado un coreeo electronico.',
+    })
+  } catch (err) {
+    next(err)
+  }
 }
 
 /*

@@ -20,7 +20,7 @@ export const InputButton = props => {
       className={cn(
         btn,
         `bg-indigo-600 text-white shadow-sm visible:outline-indigo-600
-         active:bg-indigo-700  hover:bg-indigo-500`,
+         active:bg-indigo-700  hover:bg-indigo-500 transition duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200 focus-visible:ring-offset-2 disabled:opacity-50 cursor-not-allowed`,
       )}
     />
   )

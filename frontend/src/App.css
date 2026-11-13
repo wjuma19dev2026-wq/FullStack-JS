@@ -27,6 +27,16 @@
 }
 
 body {
-  font-family: 'Staatliches';
-  /*font-family: 'CoveredByYourGrace';*/
+  /*font-family: 'Staatliches';*/
+  text-transform: none !important;
+  font-family: 'CoveredByYourGrace';
+}
+
+h1,
+h2,
+h3,
+p,
+button,
+a {
+  text-transform: none;
 }

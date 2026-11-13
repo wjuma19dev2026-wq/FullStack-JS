@@ -1,9 +1,9 @@
 import { MailtrapClient } from 'mailtrap'
 
-const MAILTRAP_SANDBOX_ID = process.env.MAILTRAP_SANDBOX_ID
+const TOKEN = process.env.MAILTRAP_SANDBOX_ID
 
 const client = new MailtrapClient({
-  token: MAILTRAP_SANDBOX_ID,
+  token: TOKEN,
   sandbox: true,
   testInboxId: 5021285,
 })

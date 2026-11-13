@@ -1,6 +1,25 @@
 import { Link } from 'react-router'
+import { Input, InputButton } from '../shared'
+import { useEffect, useState } from 'react'
+
+// Regex sencilla y suficiente para el 99% de los casos
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const OlvidePassword = () => {
+  const [correo, setCorreo] = useState('')
+  const [touched, setTouched] = useState(false)
+
+  const isValid = EMAIL_REGEX.test(correo)
+  // Solo mostramos error si el usuario ya interactuó y hay contenido inválido
+  const showError = touched && correo.length > 0 && !isValid
+
+  const handleSubmit = e => {
+    e.preventDefault()
+    setTouched(true)
+    if (!isValid) return
+    console.log('Enviando:', correo)
+  }
+
   return (
     <>
       <div className="p-5 mb-10 md:mb-0">
@@ -12,21 +31,36 @@ const OlvidePassword = () => {
         </h1>
       </div>
       <div className="p-5 grid content-center m-5 sm:m-0 lg:p-10 px-5 bg-white shadow-lg rounded-xl">
-        <form>
+        <form
+          onSubmit={handleSubmit}
+          noValidate
+        >
           <div className="mb-5">
-            <label className="block uppercase text-gray-600 text-xl font-bold">
-              Correo electrónico
-            </label>
-            <input
-              type="text"
-              placeholder="Correo de registro"
-              className="border w-full p-3 mt-2 bg-gray-50 rounded-xl"
+            <Input
+              showError={showError}
+              required={true}
+              inputChange={e => setCorreo(e.target.value)}
+              inputName="correo"
+              inputValue={correo}
+              inputBlur={() => setTouched(true)}
+              inputType="email"
+              inputPlaceholder="tu correo electrónico"
+              labelContent="Correo electrónico"
             />
+            {showError && (
+              <p
+                id="email-error"
+                className="mt-1 text-sm text-red-600"
+              >
+                Introduce un correo electrónico válido.
+              </p>
+            )}
           </div>
-          <input
-            type="button"
-            value="Enviar instrucciones"
-            className="bg-indigo-500 hover:bg-indigo-800 transition-all ease-in py-3 px-10 w-full text-white rounded-lg font-bold hover:cursor-pointer md:w-auto "
+
+          <InputButton
+            btnType="submit"
+            btnValue="Enviar instrucciones"
+            btnDisabled={!isValid}
           />
         </form>
 

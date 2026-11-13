@@ -55,16 +55,28 @@ const ConfirmarCuenta = () => {
         {!confirmado && alertOpts.message && (
           <div>
             <Alerta alertaOptions={alertOpts} />
-            <span className="block  mt-5  text-gray-500">
-              Vuelve a{' '}
-              <Link
-                to="/"
-                className="text-indigo-500 hover:text-indigo-700 font-extrabold"
-              >
-                {' '}
-                generar un token valido
-              </Link>
-            </span>
+            <nav className="mt-10 md:mt-5 md:flex md:justify-between">
+              <span className="block text-center my-3 md:my-0 text-gray-500">
+                ¿Ya tienes una cuenta?
+                <Link
+                  to="/"
+                  className="text-indigo-500 font-extrabold"
+                >
+                  {' '}
+                  Iniciar Sesión
+                </Link>
+              </span>
+              <span className="block text-center my-3 md:my-0 text-gray-500">
+                ¿No tienes una cuenta?
+                <Link
+                  to="/registrar"
+                  className="text-indigo-500 font-extrabold"
+                >
+                  {' '}
+                  Regístrate
+                </Link>
+              </span>
+            </nav>
           </div>
         )}
         {confirmado && (

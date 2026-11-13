@@ -22,7 +22,7 @@ const Login = () => {
             />
           </div>
           <div className="mb-5">
-            <label className="block uppercase text-gray-600 text-xl font-bold">
+            <label className="block  text-gray-600 text-xl font-bold">
               Contraseña
             </label>
             <input
