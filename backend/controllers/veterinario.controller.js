@@ -97,7 +97,20 @@ const login = async (req, res, next) => {
     const payload = {
       id: veterinario._id,
     }
-    return res.json({ message: 'Auth ', token: generarJWT(payload) })
+
+    return res.json({
+      success: true,
+      title: `hola!`,
+      message: `bienvenido de nuevo ${veterinario.nombre}!`,
+      user: {
+        _id: veterinario._id,
+        nombre: veterinario.nombre,
+        email: veterinario.email,
+        telefono: veterinario.telefono,
+        web: veterinario.web,
+      },
+      token: generarJWT(payload),
+    })
   } catch (err) {
     next(err)
   }

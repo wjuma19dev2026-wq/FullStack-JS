@@ -22,6 +22,11 @@ class HttpClient {
     const { data } = await this.client.get(url)
     return data
   }
+
+  login = async data => {
+    const response = await this.client.post('/veterinarios/login', data)
+    return response.data
+  }
 }
 
 export const httpClient = new HttpClient()

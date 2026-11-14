@@ -3,15 +3,28 @@ import { Button, Input } from '../shared'
 import { AnchorLink } from '../../components'
 
 // Hooks
-import useEmailValidator from '../hooks/useEmailValidator'
+import { useEmailValidator, usePasswordValidator } from '../hooks'
+import { httpClient } from '../../api'
 
 const Login = () => {
-  const { email, setEmail, touched, setTouched, showError, isFormValid } = useEmailValidator()
+  const { email, setEmail, setTouched, showError, isFormValid } = useEmailValidator()
+
+  const { password, setPassword, setPasswordTouched, showPasswordError, isPasswordValid } =
+    usePasswordValidator()
 
   /** @param { FormSubmitEvent } e */
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault()
-    console.log({ email, touched })
+    if ([email, password].includes('')) {
+      return
+    }
+    console.log({ email, password })
+    try {
+      const data = await httpClient.login({ email, password })
+      console.log(data)
+    } catch (err) {
+      console.log(err.response)
+    }
   }
 
   return (
@@ -30,10 +43,11 @@ const Login = () => {
           <div className="mb-5">
             <Input
               showError={showError}
-              inputName="correo"
-              inputType="email"
               inputBlur={() => setTouched(true)}
               inputChange={e => setEmail(e.target.value)}
+              inputValue={email}
+              inputName="correo"
+              inputType="email"
               labelContent="correo electrónico"
               inputPlaceholder="Ingresa tu correo electrónico"
               required={true}
@@ -41,6 +55,10 @@ const Login = () => {
           </div>
           <div className="mb-5">
             <Input
+              showError={showPasswordError}
+              inputChange={e => setPassword(e.target.value)}
+              inputBlur={() => setPasswordTouched(true)}
+              inputValue={password}
               inputName="password"
               inputType="password"
               labelContent="contraseña"
@@ -49,7 +67,7 @@ const Login = () => {
             />
           </div>
           <Button
-            btnDisabled={false}
+            btnDisabled={!isFormValid || !isPasswordValid}
             btnType="submit"
             btnValue="iniciar sesión"
             isFetching={false}
