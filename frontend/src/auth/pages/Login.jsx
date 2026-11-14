@@ -1,8 +1,19 @@
-import { Link } from 'react-router'
+/** @typedef { import('../types/use-form.type.js').FormSubmitEvent } FormSubmitEvent */
 import { Button, Input } from '../shared'
 import { AnchorLink } from '../../components'
 
+// Hooks
+import useEmailValidator from '../hooks/useEmailValidator'
+
 const Login = () => {
+  const { email, setEmail, touched, setTouched, showError, isFormValid } = useEmailValidator()
+
+  /** @param { FormSubmitEvent } e */
+  const handleSubmit = e => {
+    e.preventDefault()
+    console.log({ email, touched })
+  }
+
   return (
     <>
       <div className="p-5 mb-10 md:mb-0">
@@ -12,11 +23,17 @@ const Login = () => {
         </h1>
       </div>
       <div className="p-5 m-5 sm:m-0 lg:p-10 px-5 bg-white shadow-lg rounded-xl">
-        <form>
+        <form
+          onSubmit={handleSubmit}
+          noValidate
+        >
           <div className="mb-5">
             <Input
+              showError={showError}
               inputName="correo"
               inputType="email"
+              inputBlur={() => setTouched(true)}
+              inputChange={e => setEmail(e.target.value)}
               labelContent="correo electrónico"
               inputPlaceholder="Ingresa tu correo electrónico"
               required={true}
@@ -32,7 +49,7 @@ const Login = () => {
             />
           </div>
           <Button
-            btnDisabled={true}
+            btnDisabled={false}
             btnType="submit"
             btnValue="iniciar sesión"
             isFetching={false}

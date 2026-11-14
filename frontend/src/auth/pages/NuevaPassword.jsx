@@ -94,6 +94,7 @@ const NuevaPassword = () => {
             question="vuelve a"
             action="recuperar tu acceso"
             href="/olvide-password"
+            type="confirm"
           />
         </div>
       )}

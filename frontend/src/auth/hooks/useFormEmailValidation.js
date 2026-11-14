@@ -7,7 +7,7 @@ import { sleep, EMAIL_REGEX } from '../../utils'
  * @param  { import('../types/use-form.type').UseFormOptions } options
  * @return { import('../types/use-form.type').UseFormReturn }
  */
-const useForm = ({ peticionHttp, url }) => {
+const useFormEmailValidation = ({ peticionHttp, url }) => {
   const [correo, setCorreo] = useState('')
   const [touched, setTouched] = useState(false)
   const [alertOpts, setAlertOpts] = useState({})
@@ -95,4 +95,4 @@ const useForm = ({ peticionHttp, url }) => {
   }
 }
 
-export default useForm
+export default useFormEmailValidation
