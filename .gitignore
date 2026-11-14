@@ -11,6 +11,8 @@ lerna-debug.log*
 # Variables de entorno
 .env
 .env.*
+environments.js*
+environments.example.js*
 !.env.example
 
 # Build / compilación

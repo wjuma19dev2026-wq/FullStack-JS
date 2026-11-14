@@ -12,7 +12,8 @@ export const ErrorHandler = (err, req, res, next) => {
 
   if (err.name === 'INVALID_CREDENTIALS') {
     statusCode = 401
-    message = 'Invalid email or password'
+    message =
+      'Credenciales inválidas o cuenta no confirmada. Por favor, verifica tus datos o revisa tu correo.'
   }
 
   if (err.name === 'CONFLICT') {
@@ -20,14 +21,21 @@ export const ErrorHandler = (err, req, res, next) => {
     message = 'Email already exists'
   }
 
+  if (err.name === 'EMAIL_NOT_VERIFIED') {
+    statusCode = 403
+    message =
+      'Credenciales inválidas o cuenta no confirmada. Por favor, verifica tus datos o revisa tu correo.'
+  }
+
   if (err.name === 'TOKEN_INVALID') {
     statusCode = 401
-    message = 'Invalid authentication token'
+    message =
+      'El token de acceso ha expirado. Por favor, vuelve a solicitar uno.'
   }
 
   if (err.name === 'TOKEN_EXPIRED') {
     statusCode = 401
-    message = 'Authentication token has expired'
+    message = 'El token de acceso ha expirado. Por favor, refresca tu sesión.'
   }
 
   if (err.name === 'ValidationError') {
@@ -47,7 +55,7 @@ export const ErrorHandler = (err, req, res, next) => {
   // 3. Errores de JWT
   if (err.name === 'JsonWebTokenError') {
     statusCode = 401
-    message = 'Token inválido. Inicia sesión de nuevo.'
+    message = 'Token de autenticación no proporcionado.'
   }
 
   if (err.name === 'TokenExpiredError') {

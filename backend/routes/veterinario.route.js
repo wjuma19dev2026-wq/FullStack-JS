@@ -1,14 +1,14 @@
 import { Router } from 'express'
 import {
-  getProfile,
   getVeterinarios,
-  postProfile,
   postVeterinarios,
   confirmar,
   login,
   forgotPassword,
   forgotPasswordTokenVerify,
   forgotPasswordChangePassword,
+  obtenerPerfil,
+  perfil,
 } from '../controllers/veterinario.controller.js'
 import { isAuth } from '../middlewares/index.js'
 const router = Router()
@@ -28,8 +28,6 @@ router
   .post(forgotPasswordChangePassword)
 
 //- Private Routes
-router.get('/profile', getProfile)
-
-router.post('/profile', postProfile)
+router.route('/me').get([isAuth], obtenerPerfil).post([isAuth], perfil)
 
 export default router

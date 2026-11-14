@@ -43,8 +43,8 @@ const NuevaPassword = () => {
     let mounted = true
 
     const tokenVerify = async () => {
+      if (!mounted) return
       try {
-        if (!mounted) return
         const data = await httpClient.passwordForgotTokenVerify(
           `/veterinarios/forgot-password/${token}`,
         )

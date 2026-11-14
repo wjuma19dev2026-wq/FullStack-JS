@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 
 import Veterinario from '../models/veterinario.model.js'
-import { UnauthorizedError } from '../utils/index.js'
+import { UnauthorizedError, environments } from '../utils/index.js'
 
 export const isAuth = async (req, res, next) => {
   if (
@@ -9,11 +9,24 @@ export const isAuth = async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     try {
+      const secret = process.env.JWT_SECRET
       const token = req.headers.authorization.split(' ')[1]
-      const decoded = jwt.decode(token, process.env.JWT_SECRET)
+      const payload = jwt.verify(token, environments.client_secret)
+      if (!payload) {
+        const unauthorizedError = new UnauthorizedError(
+          'El token de acceso ha expirado. Por favor, vuelve a solicitar uno.',
+        )
+        unauthorizedError.name = 'TOKEN_INVALID'
+        throw unauthorizedError
+      }
 
+      const decoded = jwt.decode(token, process.env.JWT_SECRET)
       if (!decoded) {
-        throw new Error()
+        const unauthorizedError = new UnauthorizedError(
+          'El token de acceso ha expirado. Por favor, refresca tu sesión.',
+        )
+        unauthorizedError.name = 'TOKEN_EXPIRED'
+        throw unauthorizedError
       }
 
       const veterinario = await Veterinario.findById(decoded.id).select(
@@ -21,17 +34,23 @@ export const isAuth = async (req, res, next) => {
       )
       req.veterinario = veterinario
       return next()
-    } catch (error) {
-      const tokenExpiredError = new UnauthorizedError()
-      tokenExpiredError.isOperational = false
-      tokenExpiredError.name = 'TokenExpiredError'
-      return next(tokenExpiredError)
+    } catch (err) {
+      if (err.message === 'invalid signature') {
+        const unauthorizedError = new UnauthorizedError('Token inválido.')
+        return next(unauthorizedError)
+      }
+      if (err.message === 'jwt expired') {
+        const unauthorizedError = new UnauthorizedError('Token ha expirado.')
+        return next(unauthorizedError)
+      }
+      return next(err)
     }
+  } else {
+    // No hay tokon, mostrar error
+    const err = new UnauthorizedError(
+      'Token de autenticación no proporcionado.',
+    )
+    err.name = 'JsonWebTokenError'
+    return next(err)
   }
-
-  // No hay tokon, mostrar error
-  const jsonWebTokenError = new UnauthorizedError()
-  jsonWebTokenError.name = 'JsonWebTokenError'
-  jsonWebTokenError.isOperational = false
-  return next(jsonWebTokenError)
 }

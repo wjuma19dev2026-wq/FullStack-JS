@@ -1,20 +1,32 @@
 /** @typedef { import('../auth/types/auth.type').AuthProvider } AuthProvider */
+/** @typedef { import('../auth/types/auth.type').UserState } UserState */
 
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
+import { userInterceptor } from '../interceptors'
 
 const AuthContext = createContext()
 
-const initialState = {
-  _id: '1',
-  nombre: 'joe doe',
-  email: 'joedoe@gmail.com',
-}
+/** @type {UserState|null} Valores iniciales del usuraio */
+const userState = null
 
 /** @param { AuthProvider } */
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(initialState)
+  const [user, setUser] = useState(userState)
 
-  return <AuthContext.Provider value={{ user, setUser }}>{children}</AuthContext.Provider>
+  useEffect(() => {
+    const autenticarUsuario = async () => {
+      // If isAuth setter user=user other case user=null
+      await userInterceptor({ userState, setUser })
+    }
+    autenticarUsuario()
+  }, [])
+
+  return (
+    <AuthContext.Provider value={{ user, setUser }}>
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
 export { AuthProvider }

@@ -1,8 +1,17 @@
 import { Types } from 'mongoose'
 import { PasswordReset, Veterinario } from '../models/index.js'
 import { mailtrapSenderEmail } from '../services/index.js'
-import { generateUniqueId, generarJWT, emailOlvidePassword } from '../helpers/index.js'
-import { AppError, NotFoundError, ValidationError, UnauthorizedError } from '../utils/index.js'
+import {
+  generateUniqueId,
+  generarJWT,
+  emailOlvidePassword,
+} from '../helpers/index.js'
+import {
+  AppError,
+  NotFoundError,
+  ValidationError,
+  UnauthorizedError,
+} from '../utils/index.js'
 import { mailtrapClient } from '../mailtrap/client.mailtrap.js'
 
 const postVeterinarios = async (req, res, next) => {
@@ -33,7 +42,9 @@ const postVeterinarios = async (req, res, next) => {
       token: veterinario.token,
     })
 
-    return res.status(201).json({ message: 'Veterinario registrado con exito, revisa tu correo.' })
+    return res
+      .status(201)
+      .json({ message: 'Veterinario registrado con exito, revisa tu correo.' })
   } catch (err) {
     return next(err)
   }
@@ -52,13 +63,16 @@ const getVeterinarios = (req, res, next) => {
 }
 
 const confirmar = async (req, res, next) => {
-  //- Validar Token
   const { token } = req.params
+
+  //- Validar Token
   const veterinario = await Veterinario.findOne({ token })
-  console.log(veterinario)
 
   if (!veterinario) {
-    const unauthorizedError = new UnauthorizedError()
+    const unauthorizedError = new UnauthorizedError(
+      'El token de acceso ha expirado. Por favor, vuelve a solicitar uno.',
+    )
+    unauthorizedError.name = 'TOKEN_INVALID'
     throw unauthorizedError
   }
 
@@ -77,20 +91,32 @@ const login = async (req, res, next) => {
   const veterinario = await Veterinario.findOne({ email })
 
   try {
+    // Correo no existe
     if (!veterinario) {
-      const notFoundError = new NotFoundError()
-      notFoundError.name = 'INVALID_CREDENTIALS'
-      notFoundError.isOperational = false
-      throw notFoundError
+      const unauthorizedError = new UnauthorizedError(
+        'Credenciales inválidas o cuenta no confirmada. Por favor, verifica tus datos o revisa tu correo.',
+      )
+      unauthorizedError.name = 'INVALID_CREDENTIALS'
+      throw unauthorizedError
     }
 
-    //- Credentials Validations
+    //- Password incorrecta
     const comprobarPassword = await veterinario.comprobarPassword(password)
     if (!comprobarPassword) {
-      const notFoundError = new NotFoundError()
-      notFoundError.name = 'INVALID_CREDENTIALS'
-      notFoundError.isOperational = false
-      throw notFoundError
+      const unauthorizedError = new UnauthorizedError(
+        'Credenciales inválidas o cuenta no confirmada. Por favor, verifica tus datos o revisa tu correo.',
+      )
+      unauthorizedError.name = 'INVALID_CREDENTIALS'
+      throw unauthorizedError
+    }
+
+    // Validar cuenta
+    if (!veterinario.confirmado) {
+      const unauthorizedError = new UnauthorizedError(
+        'Credenciales inválidas o cuenta no confirmada. Por favor, verifica tus datos o revisa tu correo.',
+      )
+      unauthorizedError.name = 'EMAIL_NOT_VERIFIED'
+      throw unauthorizedError
     }
 
     //- Token Payload
@@ -102,25 +128,32 @@ const login = async (req, res, next) => {
       success: true,
       title: `hola!`,
       message: `bienvenido de nuevo ${veterinario.nombre}!`,
-      user: {
-        _id: veterinario._id,
-        nombre: veterinario.nombre,
-        email: veterinario.email,
-        telefono: veterinario.telefono,
-        web: veterinario.web,
-      },
       token: generarJWT(payload),
     })
+    // return res.json({
+    //   success: true,
+    //   title: `hola!`,
+    //   message: `bienvenido de nuevo ${veterinario.nombre}!`,
+    //   user: {
+    //     _id: veterinario._id,
+    //     nombre: veterinario.nombre,
+    //     email: veterinario.email,
+    //     telefono: veterinario.telefono,
+    //     web: veterinario.web,
+    //   },
+    //   token: generarJWT(payload),
+    // })
   } catch (err) {
     next(err)
   }
 }
 
-const getProfile = (req, res) => {
-  return res.json({ url: 'Mostrando Perfil de Veterinario' })
+const obtenerPerfil = (req, res) => {
+  const user = req.veterinario
+  return res.json(user)
 }
 
-const postProfile = (req, res) => {
+const perfil = (req, res) => {
   return res.json({ url: 'Desde API/VETERINARIOS/PROFILE' })
 }
 
@@ -183,11 +216,6 @@ export const forgotPassword = async (req, res, next) => {
   }
 }
 
-/*
-  Method: GET
-  Url: localhost://4000/api/veterinarios/forgot-password/:token
-  Params: Token
- */
 export const forgotPasswordTokenVerify = async (req, res, next) => {
   const { token } = req.params
 
@@ -221,11 +249,6 @@ export const forgotPasswordTokenVerify = async (req, res, next) => {
   }
 }
 
-/*
-  Method: POST
-  Url: localhost://4000/api/veterinarios/forgot-password/:token
-  Params: Token
- */
 export const forgotPasswordChangePassword = async (req, res, next) => {
   const { password } = req.body
   const { token } = req.params
@@ -261,4 +284,11 @@ export const forgotPasswordChangePassword = async (req, res, next) => {
   })
 }
 
-export { getVeterinarios, postVeterinarios, getProfile, postProfile, confirmar, login }
+export {
+  getVeterinarios,
+  postVeterinarios,
+  obtenerPerfil,
+  perfil,
+  confirmar,
+  login,
+}

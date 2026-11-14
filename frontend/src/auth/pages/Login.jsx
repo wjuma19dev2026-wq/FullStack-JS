@@ -3,17 +3,29 @@ import { Button, Input } from '../shared'
 import { AnchorLink } from '../../components'
 
 // Hooks
-import { useEmailValidator, usePasswordValidator } from '../hooks'
+import { useAuth, useEmailValidator, usePasswordValidator } from '../hooks'
 import { httpClient } from '../../api'
+import { useNavigate } from 'react-router'
+import { useState } from 'react'
 
 const Login = () => {
-  const { email, setEmail, setTouched, showError, isFormValid } = useEmailValidator()
+  const { email, setEmail, setTouched, showError, isFormValid } =
+    useEmailValidator()
 
-  const { password, setPassword, setPasswordTouched, showPasswordError, isPasswordValid } =
-    usePasswordValidator()
+  const {
+    password,
+    setPassword,
+    setPasswordTouched,
+    showPasswordError,
+    isPasswordValid,
+  } = usePasswordValidator()
+
+  const [isFetching, setIsFetching] = useState(false)
+  const navigate = useNavigate()
 
   /** @param { FormSubmitEvent } e */
   const handleSubmit = async e => {
+    setIsFetching(true)
     e.preventDefault()
     if ([email, password].includes('')) {
       return
@@ -21,8 +33,13 @@ const Login = () => {
     console.log({ email, password })
     try {
       const data = await httpClient.login({ email, password })
-      console.log(data)
+      if (data.token) {
+        localStorage.setItem('apv_token', data.token)
+        setIsFetching(false)
+        navigate('/dashboard')
+      }
     } catch (err) {
+      setIsFetching(false)
       console.log(err.response)
     }
   }
@@ -70,7 +87,7 @@ const Login = () => {
             btnDisabled={!isFormValid || !isPasswordValid}
             btnType="submit"
             btnValue="iniciar sesión"
-            isFetching={false}
+            isFetching={isFetching}
           />
         </form>
 

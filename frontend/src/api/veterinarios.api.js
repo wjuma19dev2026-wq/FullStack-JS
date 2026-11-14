@@ -1,4 +1,10 @@
+/**
+ * @typedef {
+ *    import('../auth/types/auth.type.js').AuthHeaders
+ * } AuthHeaders
+ */
 import { create } from 'axios'
+import { sleep } from '../utils'
 
 const veterinarioApi = create({
   baseURL: `${import.meta.env.VITE_BACKEND_URL}/api`,
@@ -24,8 +30,19 @@ class HttpClient {
   }
 
   login = async data => {
+    await sleep(3000)
     const response = await this.client.post('/veterinarios/login', data)
     return response.data
+  }
+
+  /**
+   * @param {import('axios').AxiosRequestConfig & {
+   *   headers?: import('axios').AxiosHeaders | AuthHeaders
+   * }} config
+   */
+  obtenerPerfil = async config => {
+    const { data } = await this.client.get('/veterinarios/me', config)
+    return data
   }
 }
 
