@@ -1,8 +1,10 @@
 @import 'tailwindcss';
+/*@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');*/
 
 @font-face {
   font-family: 'CoveredByYourGrace';
-  src: url('./assets/fonts/Covered_By_Your_Grace/CoveredByYourGrace-Regular.ttf') format('truetype');
+  src: url('./assets/fonts/Covered_By_Your_Grace/CoveredByYourGrace-Regular.ttf')
+    format('truetype');
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -10,7 +12,8 @@
 
 @font-face {
   font-family: 'Staatliches';
-  src: url('./assets/fonts/Staatliches/Staatliches-Regular.ttf') format('truetype');
+  src: url('./assets/fonts/Staatliches/Staatliches-Regular.ttf')
+    format('truetype');
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -26,7 +29,9 @@
 
 body {
   /*font-family: 'Staatliches';*/
-  text-transform: none !important;
+  /*font-family: 'Hi Melody';*/
+  /*font-family: 'Roboto', sans-serif;*/
+  /*text-transform: none !important;*/
   font-family: 'CoveredByYourGrace';
   font-size: 1.1rem;
 }

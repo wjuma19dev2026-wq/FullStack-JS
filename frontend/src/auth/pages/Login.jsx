@@ -9,13 +9,14 @@ import { Button, Input } from '../shared'
 import { AnchorLink } from '../../components'
 
 // Hooks
-import { useEmailValidator, usePasswordValidator } from '../hooks'
+import { useAuth, useEmailValidator, usePasswordValidator } from '../hooks'
 
 // http
 import { httpClient } from '../../api'
 
 // Auth
 import { clearSession, setSession } from '../../libs/session.js'
+import { safeRedirect } from '../../utils/safeRedirect.js'
 
 const Login = () => {
   const { email, setEmail, setTouched, showError, isFormValid } =
@@ -38,6 +39,7 @@ const Login = () => {
     setIsFetching(true)
     e.preventDefault()
     if ([email, password].includes('')) {
+      setIsFetching(false)
       return
     }
     console.log({ email, password })

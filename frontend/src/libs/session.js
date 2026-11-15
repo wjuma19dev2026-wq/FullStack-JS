@@ -64,7 +64,8 @@ export const verifySession = async () => {
     /** @type {any} */
     err
   ) {
-    console.log(err.response)
+    alert(err.response.data.message)
+    // console.log(err.response)
     return null
   }
 }

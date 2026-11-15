@@ -21,7 +21,7 @@ const authLoader = async ({ request }) => {
     throw redirect(`/?${params.toString()}`)
   }
 
-  // Lo que devuelvas queda disponible con useLoaderData() en la ruta
+  // Lo que devuelvas queda disponible con useLoaderData() en la ruta protegida exactamente donde se use el loader:AuthLoader
   return { user: session }
 }
 

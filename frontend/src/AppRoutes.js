@@ -12,7 +12,7 @@ import {
   Resgistrar,
 } from './auth/pages'
 import { ProtectedRoutes } from './admin/layouts/ProtectedRoutes'
-import { AdministrarPacientes } from './admin/pages'
+import { AdministrarPacientes, Me } from './admin/pages'
 
 /**
  Nota: los `loader` de rutas padre **se ejecutan para todas las rutas hijas**. Eso significa que `/admin`, `/admin/pacientes/:id` y cualquier otra ruta bajo `/admin` quedan protegidas automáticamente con una sola declaración. 👌
@@ -54,6 +54,10 @@ const router = createBrowserRouter([
       {
         index: true,
         Component: AdministrarPacientes,
+      },
+      {
+        path: 'me',
+        Component: Me,
       },
     ],
   },
