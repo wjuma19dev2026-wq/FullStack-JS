@@ -2,8 +2,7 @@
 /** @typedef { import('../auth/types/auth.type').UserState } UserState */
 
 import { createContext, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router'
-import { userInterceptor } from '../interceptors'
+import { verifySession } from '../libs/session'
 
 const AuthContext = createContext()
 
@@ -13,17 +12,25 @@ const userState = null
 /** @param { AuthProvider } */
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(userState)
+  const [isLoading, setIsLoading] = useState(true)
+
+  let mounted = true
 
   useEffect(() => {
-    const autenticarUsuario = async () => {
-      // If isAuth setter user=user other case user=null
-      await userInterceptor({ userState, setUser })
+    if (!mounted) return
+    verifySession().then(user => {
+      setUser(user ?? null)
+      setIsLoading(false)
+    })
+    return () => {
+      mounted = false
     }
-    autenticarUsuario()
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider
+      value={{ user, setUser, isLoading, isAuthenticated: !!user }}
+    >
       {children}
     </AuthContext.Provider>
   )

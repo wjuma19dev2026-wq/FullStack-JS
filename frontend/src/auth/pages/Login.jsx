@@ -1,12 +1,21 @@
 /** @typedef { import('../types/use-form.type.js').FormSubmitEvent } FormSubmitEvent */
+
+// Core
+import { useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router'
+
+// Components
 import { Button, Input } from '../shared'
 import { AnchorLink } from '../../components'
 
 // Hooks
-import { useAuth, useEmailValidator, usePasswordValidator } from '../hooks'
+import { useEmailValidator, usePasswordValidator } from '../hooks'
+
+// http
 import { httpClient } from '../../api'
-import { useNavigate } from 'react-router'
-import { useState } from 'react'
+
+// Auth
+import { clearSession, setSession } from '../../libs/session.js'
 
 const Login = () => {
   const { email, setEmail, setTouched, showError, isFormValid } =
@@ -21,6 +30,7 @@ const Login = () => {
   } = usePasswordValidator()
 
   const [isFetching, setIsFetching] = useState(false)
+  const [searchParams] = useSearchParams()
   const navigate = useNavigate()
 
   /** @param { FormSubmitEvent } e */
@@ -32,14 +42,19 @@ const Login = () => {
     }
     console.log({ email, password })
     try {
-      const data = await httpClient.login({ email, password })
-      if (data.token) {
-        localStorage.setItem('apv_token', data.token)
+      const { token } = await httpClient.login({ email, password })
+      if (token) {
+        setSession({ token })
         setIsFetching(false)
-        navigate('/dashboard')
+        // 🔑 Destino: el ?next= validado o el fallback
+        const destination = safeRedirect(searchParams.get('next'), '/admin')
+
+        // replace: true → no deja /login en el historial
+        navigate(destination, { replace: true })
       }
     } catch (err) {
       setIsFetching(false)
+      clearSession()
       console.log(err.response)
     }
   }

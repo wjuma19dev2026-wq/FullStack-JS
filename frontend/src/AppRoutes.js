@@ -11,6 +11,13 @@ import {
   OlvidePassword,
   Resgistrar,
 } from './auth/pages'
+import { ProtectedRoutes } from './admin/layouts/ProtectedRoutes'
+import { AdministrarPacientes } from './admin/pages'
+
+/**
+ Nota: los `loader` de rutas padre **se ejecutan para todas las rutas hijas**. Eso significa que `/admin`, `/admin/pacientes/:id` y cualquier otra ruta bajo `/admin` quedan protegidas automáticamente con una sola declaración. 👌
+ */
+import { authLoader } from './loaders'
 
 const router = createBrowserRouter([
   {
@@ -36,6 +43,17 @@ const router = createBrowserRouter([
       {
         path: 'olvide-password/:token',
         Component: NuevaPassword,
+      },
+    ],
+  },
+  {
+    path: '/admin',
+    Component: ProtectedRoutes,
+    loader: authLoader,
+    children: [
+      {
+        index: true,
+        Component: AdministrarPacientes,
       },
     ],
   },
