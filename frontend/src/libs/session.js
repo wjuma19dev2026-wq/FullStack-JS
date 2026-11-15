@@ -69,3 +69,24 @@ export const verifySession = async () => {
     return null
   }
 }
+
+export const isTokenValid = (token = getTokenFromStorage()) => {
+  if (!token) return false
+  try {
+    const payloadBase64 = token.split('.')[1]
+    const decodedJson = atob(
+      payloadBase64.replace(/-/g, '+').replace(/_/g, '/'),
+    )
+    const payload = JSON.parse(decodedJson)
+
+    // exp viene en segundos, Date.now() en milisegundos
+    if (payload.exp && payload.exp * 1000 < Date.now()) {
+      clearSession()
+      return false
+    }
+    return true
+  } catch (error) {
+    clearSession()
+    return false
+  }
+}

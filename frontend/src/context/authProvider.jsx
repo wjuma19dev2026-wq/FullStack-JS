@@ -3,8 +3,8 @@
 
 /** @typedef {'indigo'|'lime'|'suchsia'|'rose'|'mauve'|'neutral'|'stone'|'red'|'amber'|'sky'} Theme */
 
-import { createContext, useEffect, useState } from 'react'
-import { verifySession } from '../libs/session'
+import { createContext, useCallback, useEffect, useState } from 'react'
+import { clearSession, verifySession } from '../libs/session'
 
 const AuthContext = createContext()
 
@@ -15,7 +15,7 @@ const userState = null
  * Valor por defecto del theme
  * @type {Theme}
  */
-const defaultTheme = 'sky'
+const defaultTheme = 'neutral'
 
 /** @param { AuthProvider } */
 const AuthProvider = ({ children }) => {
@@ -23,22 +23,29 @@ const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [theme, setTheme] = useState(defaultTheme)
 
-  let mounted = true
-
   useEffect(() => {
-    if (!mounted) return
     verifySession().then(user => {
       setUser(user ?? null)
       setIsLoading(false)
     })
-    return () => {
-      mounted = false
-    }
+  }, [])
+
+  const logout = useCallback(() => {
+    clearSession() // 🔑 mismo módulo
+    setUser(null)
   }, [])
 
   return (
     <AuthContext.Provider
-      value={{ user, setUser, isLoading, isAuthenticated: !!user, theme }}
+      value={{
+        user,
+        setUser,
+        isLoading,
+        isAuthenticated: !!user,
+        logout,
+        theme,
+        setTheme,
+      }}
     >
       {children}
     </AuthContext.Provider>

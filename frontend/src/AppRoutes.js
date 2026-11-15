@@ -18,6 +18,7 @@ import { AdministrarPacientes, Me } from './admin/pages'
  Nota: los `loader` de rutas padre **se ejecutan para todas las rutas hijas**. Eso significa que `/admin`, `/admin/pacientes/:id` y cualquier otra ruta bajo `/admin` quedan protegidas automáticamente con una sola declaración. 👌
  */
 import { authLoader } from './loaders'
+import { guestLoader } from './loaders/guestLoader'
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,7 @@ const router = createBrowserRouter([
       {
         index: true,
         Component: Login,
+        loader: guestLoader,
       },
       {
         path: 'confirmar-cuenta/:token',

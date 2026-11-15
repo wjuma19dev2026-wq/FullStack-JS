@@ -9,6 +9,8 @@
 
 import { cn } from 'cn'
 import { bg, color, bgDarker, colorDarker, hoverClassMap } from '../utils'
+import { useAuth } from '../../auth/hooks'
+import { useNavigate } from 'react-router'
 
 /** @param { Props } */
 export const Header = ({ theme }) => {
@@ -19,7 +21,11 @@ export const Header = ({ theme }) => {
 
   const navItems = ['pacientes', 'perfil']
 
-  console.log(theme)
+  // Hooks
+  const navigate = useNavigate()
+
+  // session
+  const { logout } = useAuth()
 
   return (
     <header className={cn('border-b border-slate-200 shadow-sm', headerBg)}>
@@ -68,6 +74,10 @@ export const Header = ({ theme }) => {
               textColor,
               hoverClassMap[theme],
             )}
+            onClick={() => {
+              logout()
+              navigate('/', { replace: true })
+            }}
           >
             Logout
           </button>

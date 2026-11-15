@@ -4,10 +4,13 @@ import { Footer, Header } from '../shared'
 
 export const ProtectedRoutes = () => {
   const { isLoading, theme } = useAuth()
+
+  if (isLoading) return <h3>Cargando ...</h3>
+
   return (
     <>
       <Header theme={theme ? theme : 'indigo'} />
-      {isLoading ? <h3>Cargando ...</h3> : <Outlet />}
+      <Outlet />
       <Footer theme={theme ? theme : 'indigo'} />
     </>
   )
