@@ -1,1 +1,1 @@
-export { bg, color } from './themeClasses'
+export { bg, color, bgDarker, colorDarker, hoverClassMap } from './themeClasses'

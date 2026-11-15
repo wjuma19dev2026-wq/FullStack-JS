@@ -6,9 +6,9 @@ export const ProtectedRoutes = () => {
   const { isLoading, theme } = useAuth()
   return (
     <>
-      <Header theme={theme} />
+      <Header theme={theme ? theme : 'indigo'} />
       {isLoading ? <h3>Cargando ...</h3> : <Outlet />}
-      <Footer theme={theme} />
+      <Footer theme={theme ? theme : 'indigo'} />
     </>
   )
 }
