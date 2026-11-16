@@ -10,7 +10,7 @@
 import { cn } from 'cn'
 import { bg, color, bgDarker, colorDarker, hoverClassMap } from '../utils'
 import { useAuth } from '../../auth/hooks'
-import { useNavigate } from 'react-router'
+import { useNavigate, NavLink } from 'react-router'
 
 /** @param { Props } */
 export const Header = ({ theme }) => {
@@ -19,7 +19,10 @@ export const Header = ({ theme }) => {
   const textColorDarker = colorDarker?.[theme]
   const headerBgDarker = bgDarker?.[theme]
 
-  const navItems = ['pacientes', 'perfil']
+  const navItems = [
+    { item: 'pacientes', path: '/admin' },
+    { item: 'perfil', path: '/admin/me' },
+  ]
 
   // Hooks
   const navigate = useNavigate()
@@ -50,10 +53,11 @@ export const Header = ({ theme }) => {
           aria-label="Navegación principal"
           className="items-center gap-8 flex"
         >
-          {navItems.map(item => (
-            <a
-              key={item}
-              href="#"
+          {navItems.map(link => (
+            <NavLink
+              key={link.item}
+              to={link.path}
+              relative="route"
               style={{
                 textTransform: 'uppercase',
               }}
@@ -62,8 +66,8 @@ export const Header = ({ theme }) => {
                 hoverClassMap[theme],
               )}
             >
-              {item}
-            </a>
+              {link.item}
+            </NavLink>
           ))}
         </nav>
 

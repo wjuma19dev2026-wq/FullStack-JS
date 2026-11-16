@@ -15,7 +15,7 @@ const userState = null
  * Valor por defecto del theme
  * @type {Theme}
  */
-const defaultTheme = 'neutral'
+const defaultTheme = 'sky'
 
 /** @param { AuthProvider } */
 const AuthProvider = ({ children }) => {

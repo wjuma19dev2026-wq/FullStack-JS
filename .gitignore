@@ -35,6 +35,9 @@ temp/
 # Logs
 logs/
 *.log
+agy_logs.md
+GEMENI.md
+copilot.md
 
 # Archivos de base de datos local
 *.sqlite

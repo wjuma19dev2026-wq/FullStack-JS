@@ -1,1 +1,16 @@
-export { bg, color, bgDarker, colorDarker, hoverClassMap } from './themeClasses'
+export {
+  bg,
+  color,
+  bgDarker,
+  colorDarker,
+  hoverClassMap,
+  focus_border_500,
+  focus_outline_600_40,
+  focus_ring_500_40,
+  focus_ring_600_40,
+  bg600,
+  activeBg700,
+  hoverBg500,
+  visibleOutline600,
+  focusVisibleRing200,
+} from './themeClasses'
