@@ -4,7 +4,11 @@
 
 //- Imports
 import { Paciente } from '../models/index.js'
-import { ValidationError, UnauthorizedError, NotFoundError } from '../utils/AppError.js'
+import {
+  ValidationError,
+  UnauthorizedError,
+  NotFoundError,
+} from '../utils/AppError.js'
 
 /**
  * Obtener Listado de Pacientes
@@ -14,8 +18,10 @@ import { ValidationError, UnauthorizedError, NotFoundError } from '../utils/AppE
  * @returns { Promise<Record<string, any>> }
  */
 export const obtenerPacientes = async (req, res, next) => {
-  const pacientes = await Paciente.find().where('veterinario').equals(req.veterinario)
-  return res.status(200).json({ pacientes })
+  const pacientes = await Paciente.find()
+    .where('veterinario')
+    .equals(req.veterinario)
+  return res.status(200).json(pacientes)
 }
 
 /**
@@ -25,7 +31,11 @@ export const obtenerPacientes = async (req, res, next) => {
  * @param { import('express').NextFunction } next
  */
 export const registrarPaciente = async (req, res, next) => {
-  if (!req.body || typeof req.body !== 'object' || Object.keys(req.body).length === 0) {
+  if (
+    !req.body ||
+    typeof req.body !== 'object' ||
+    Object.keys(req.body).length === 0
+  ) {
     const validationError = new ValidationError(
       'El cuerpo de la petición está vacío o no es válido',
     )
@@ -42,7 +52,9 @@ export const registrarPaciente = async (req, res, next) => {
       throw notFoundError
     }
 
-    return res.status(200).json({ message: 'Paciente creado!.', paciente: pacienteAlmacenado })
+    return res
+      .status(200)
+      .json({ message: 'Paciente creado!.', paciente: pacienteAlmacenado })
   } catch (err) {
     next(err)
   }

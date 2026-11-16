@@ -24,7 +24,8 @@ export const InputForm = ({
   labelContent,
   inputChange,
   required = false,
-  inputBlur = () => console.log('Hiciste blur'),
+  inputBlur,
+  // inputBlur = () => console.log('Hiciste blur'),
 }) => {
   const { theme } = useAuth()
 

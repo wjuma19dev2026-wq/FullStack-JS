@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Button } from '../../components'
 import { Formulario, ListadoPacientes } from '../components'
+import { PacienteForm } from '../../formularios'
 
 const AdministrarPacientes = () => {
   const [mostarFormulario, setMostrarFormulario] = useState(false)
@@ -20,7 +21,7 @@ const AdministrarPacientes = () => {
           queryFn={() => setMostrarFormulario(!mostarFormulario)}
         />
       </div>
-      <div className="grid sm:grid-cols-[250px_1fr]  grid-flow-row gap-4 mt-5">
+      <div className="grid sm:grid-cols-[300px_1fr]  grid-flow-row gap-4 mt-5">
         <div>
           <Formulario mostarFormulario={mostarFormulario} />
         </div>
