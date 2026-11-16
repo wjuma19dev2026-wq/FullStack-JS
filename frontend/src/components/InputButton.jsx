@@ -14,6 +14,7 @@ const btn = `inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 
  * @returns {import('react').ReactNode}
  */
 export const Button = ({
+  queryFn,
   btnValue = 'Enviar',
   btnType = 'button',
   btnDisabled = false,
@@ -23,6 +24,8 @@ export const Button = ({
   const { theme } = useAuth()
   return (
     <button
+      style={{ textTransform: 'capitalize' }}
+      onClick={queryFn ? queryFn : null}
       type={btnType}
       disabled={loading}
       aria-busy={loading}

@@ -49,6 +49,7 @@
  * @property {BtnTypes} btnType
  * @property {boolean} btnDisabled
  * @property {boolean} btnFetching
+ * @property {() => void} queryFn
  */
 
 export {}

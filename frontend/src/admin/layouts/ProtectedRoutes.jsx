@@ -10,7 +10,7 @@ export const ProtectedRoutes = () => {
   return (
     <>
       <Header theme={theme ? theme : 'indigo'} />
-      <div className="container  mx-auto  px-5 sm:px-0 md:px-0">
+      <div className="container  mx-auto  px-5 sm:px-0 md:px-0 mb-5">
         <Outlet />
       </div>
       <Footer theme={theme ? theme : 'indigo'} />

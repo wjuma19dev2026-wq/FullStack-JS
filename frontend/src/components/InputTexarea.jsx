@@ -31,12 +31,14 @@ export const InputTextarea = ({
   return (
     <div className="mb-2">
       <label
+        style={{ textTransform: 'capitalize' }}
         htmlFor={inputName}
         className="block text-gray-600 text-lg font-bold"
       >
         {labelContent}
       </label>
       <textarea
+        style={{ textTransform: 'capitalize' }}
         required={required}
         onChange={inputChange}
         onBlur={inputBlur}
