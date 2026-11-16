@@ -3,6 +3,7 @@ import { useAuth } from '../../auth/hooks'
 import { Button, InputForm, InputTextarea } from '../../components'
 import { color } from '../utils'
 import { useState } from 'react'
+import { TodayStr } from '../helpers'
 
 export const Formulario = ({ mostarFormulario }) => {
   const { theme } = useAuth()
@@ -10,7 +11,7 @@ export const Formulario = ({ mostarFormulario }) => {
   const [mascota, setMascota] = useState('')
   const [nombre, setNombre] = useState('')
   const [correo, setCorreo] = useState('')
-  const [fecha, setFecha] = useState(new Date())
+  const [fecha, setFecha] = useState(TodayStr())
   const [sintoma, setSintoma] = useState('')
   const [alerta, setAlerta] = useState({})
 
