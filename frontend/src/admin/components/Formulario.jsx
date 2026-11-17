@@ -6,23 +6,40 @@
 import { cn } from 'cn'
 import { Button, InputForm, InputTextarea } from '../../components'
 import { color } from '../utils'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 // Hooks
 import { useAuth } from '../../auth/hooks'
 import { usePaciente } from '@/hooks'
+import { dateToInputValue } from '@/utils/dateToInputValue'
 
 /** @param {Props} */
 export const Formulario = ({ mostarFormulario }) => {
+  const formRef = useRef(null)
+
   const { theme } = useAuth()
-  const { pacientes, agregarPaciente } = usePaciente()
+  const { pacientes, agregar, paciente, pacienteSelected, editar } =
+    usePaciente()
 
   const [propietario, setPropietario] = useState('')
   const [nombre, setNombre] = useState('')
   const [email, setEmail] = useState('')
   const [fecha, setFecha] = useState('')
   const [sintoma, setSintoma] = useState('')
+  const [_id, setId] = useState(null)
+
   const [alerta, setAlerta] = useState({})
+
+  useEffect(() => {
+    if (paciente?.nombre) {
+      setNombre(paciente.nombre)
+      setPropietario(paciente.propietario)
+      setEmail(paciente.email)
+      setFecha(dateToInputValue(paciente.fecha))
+      setSintoma(paciente.sintoma)
+      setId(paciente._id)
+    }
+  }, [paciente])
 
   /** @param {React.FormEvent<Event>} e */
   const handleSubmit = e => {
@@ -40,13 +57,32 @@ export const Formulario = ({ mostarFormulario }) => {
 
     if (Object.values(errores).some(Boolean)) return
 
-    agregarPaciente({ propietario, nombre, email, fecha, sintoma })
+    if (_id) {
+      editar({ propietario, nombre, email, fecha, sintoma, _id })
+      setNombre('')
+      setEmail('')
+      setPropietario('')
+      setSintoma('')
+      setFecha('')
+      e.target.reset()
+    } else {
+      agregar({ propietario, nombre, email, fecha, sintoma })
+      setNombre('')
+      setEmail('')
+      setPropietario('')
+      setSintoma('')
+      setFecha('')
+      e.target.reset()
+    }
+  }
+
+  const borrarFormulario = () => {
     setNombre('')
     setEmail('')
     setPropietario('')
     setSintoma('')
     setFecha('')
-    e.target.reset()
+    formRef.current.reset()
   }
 
   return (
@@ -62,6 +98,7 @@ export const Formulario = ({ mostarFormulario }) => {
       </header>
 
       <form
+        ref={formRef}
         onSubmit={handleSubmit}
         noValidate
         className={cn(
@@ -134,10 +171,16 @@ export const Formulario = ({ mostarFormulario }) => {
 
         <Button
           btnType="submit"
-          btnValue="agregar paciente"
+          btnValue={_id ? 'actualizar paciente' : 'agregar paciente'}
           btnDisabled={false}
           btnFetching={false}
         />
+        <button
+          onClick={borrarFormulario}
+          className="ml-5"
+        >
+          borrar
+        </button>
       </form>
     </aside>
   )

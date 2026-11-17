@@ -7,6 +7,7 @@
  * @property {string} email
  * @property {string} sintoma
  * @property {string} fecha
+ * @property {string} [_id]
  */
 
 export {}

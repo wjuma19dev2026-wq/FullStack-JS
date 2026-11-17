@@ -119,9 +119,9 @@ export const actualizarPaciente = async (req, res, next) => {
 
     //- Modificar paciente y guardarlo en la db
     paciente_db.nombre = nombre
-    await paciente_db.save()
+    const pacienteActualizado = await paciente_db.save()
 
-    res.status(200).json({ message: 'Paciente actualizado exitosamente.' })
+    res.status(200).json(pacienteActualizado)
   } catch (err) {
     next(err)
   }

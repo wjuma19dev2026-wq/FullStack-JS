@@ -30,6 +30,7 @@ class HttpPaciente extends HttpClient {
               propietario: paciente.propietario,
               sintoma: paciente.sintoma,
               email: paciente.email,
+              _id: paciente._id,
             }
           },
         )
@@ -40,6 +41,11 @@ class HttpPaciente extends HttpClient {
 
   agregar = async (url = '', paciente = {}) => {
     const { data } = await this.axiosClient.post(url, paciente, this.config)
+    return data
+  }
+
+  actualizar = async (url = '', paciente = {}) => {
+    const { data } = await this.axiosClient.patch(url, paciente, this.config)
     return data
   }
 }

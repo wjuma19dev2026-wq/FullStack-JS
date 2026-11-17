@@ -1,13 +1,18 @@
 /**  @typedef {import('../admin/types').Paciente} Paciente */
 
 /**
- * @typedef {(paciente: Paciente) => void} AgregarPaciente
+ * @typedef {(paciente: Paciente) => void} Agregar
+ * @typedef {(paciente: Paciente) => void} Editar
+ * @typedef {(paciente: Paciente) => void} PacienteSelected
  */
 
 /**
  * @typedef { object } UsePaciente
  * @property {Paciente[]} pacientes
- * @property {AgregarPaciente} agregarPaciente
+ * @property {Agregar} agregar
+ * @property {Editar} editar
+ * @property {Paciente} paciente
+ * @property {PacienteSelected} pacienteSelected
  */
 
 import { PacienteContext } from '@/context'
